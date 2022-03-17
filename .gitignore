@@ -131,3 +131,4 @@ dmypy.json
 *.db
 env.bat
 reset.bat
+node_modules/
