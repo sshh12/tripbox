@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Box, Flex, Button, Text, Link, Heading } from "rebass";
+import { Box, Flex, Text, Link } from "rebass";
 import { useAppEnv } from "../env";
 
 const TripView = ({ path }) => {
-  const { user, api } = useAppEnv();
+  const { api } = useAppEnv();
   const [trip, setTrip] = useState(null);
   const TABS = {
     Items: null,
@@ -14,7 +14,7 @@ const TripView = ({ path }) => {
   const [curTab, setCurTab] = useState(Object.keys(TABS)[0]);
   useEffect(() => {
     api.get("/api/trips", { trip_id: path[1] }).then((trip) => setTrip(trip));
-  }, [api]);
+  }, [api, path]);
   return (
     <Box>
       <Flex px={2} color="white" bg="black" alignItems="center">

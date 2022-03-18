@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Flex, Button, Text, Link, Heading } from "rebass";
+import { Box, Flex, Text, Link } from "rebass";
 import { useAppEnv } from "../env";
 
 const TripsView = () => {
