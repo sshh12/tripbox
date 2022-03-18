@@ -1,22 +1,33 @@
-import os
 import datetime
-import secrets
 import json
-from flask import Flask, send_from_directory, g, session, jsonify, request, abort, redirect
+import os
+import secrets
 
+from flask import (
+    Flask,
+    abort,
+    g,
+    jsonify,
+    redirect,
+    request,
+    send_from_directory,
+    session,
+)
+
+from tripbox import emails
 from tripbox.models import (
+    AuthToken,
+    Trip,
+    User,
+    create_item,
+    create_trip,
     database,
     get_or_404,
-    create_trip,
     get_or_create_user,
-    create_item,
-    AuthToken,
-    User,
-    Trip,
 )
-from tripbox import emails
 
-BASE_URL = os.environ.get("BASE_URL", "http://localhost:5000")
+BASE_URL = os.environ["BASE_URL"]
+USE_DEMO_LOGIN = bool(os.environ["USE_DEMO_LOGIN"])
 
 
 app = Flask(__name__, static_folder="./build")
@@ -66,8 +77,9 @@ def serve(path):
 
 @app.route("/api/login", methods=["POST"])
 def login():
-    if True:
+    if USE_DEMO_LOGIN:
         auth_user(session, "example@example.com")
+        return
     token = gen_token()
     secret = gen_token()
     session["auth_token"] = token

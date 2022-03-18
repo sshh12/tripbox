@@ -1,21 +1,30 @@
-from flask import abort
-import secrets
+import datetime
+import os
 import re
+import secrets
+from urllib.parse import urlparse
+
+from flask import abort
 from peewee import (
-    SqliteDatabase,
-    IntegrityError,
-    Model,
+    AutoField,
+    BooleanField,
     CharField,
     DateTimeField,
-    BooleanField,
     ForeignKeyField,
-    AutoField,
+    IntegrityError,
+    Model,
 )
-import datetime
+from playhouse.postgres_ext import PostgresqlExtDatabase
 
-DATABASE = "tripbox.db"
+DATABASE_URL = urlparse(os.environ["DATABASE_URL"])
 
-database = SqliteDatabase(DATABASE)
+database = PostgresqlExtDatabase(
+    database=DATABASE_URL.path[1:],
+    user=DATABASE_URL.username,
+    password=DATABASE_URL.password,
+    host=DATABASE_URL.hostname,
+    port=DATABASE_URL.port,
+)
 
 
 class BaseModel(Model):
@@ -119,9 +128,13 @@ def get_or_create_user(email):
     return user
 
 
+MODELS = [AuthToken, User, Trip, Item, UserTrip, TripItem]
+
+
 def create_tables():
     with database:
-        database.create_tables([AuthToken, User, Trip, Item, UserTrip, TripItem])
+        database.drop_tables(MODELS)
+        database.create_tables(MODELS)
     user = get_or_create_user("example@example.com")
     trip = create_trip(user, "Test Trip")
 

@@ -2,10 +2,17 @@
   "editor.formatOnSave": true,
   "python.formatting.provider": "black",
   "python.formatting.blackArgs": ["--line-length", "120"],
-  "python.linting.pylintUseMinimalCheckers": false,
   "editor.showUnused": true,
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.tabSize": 2
   },
+  "python.sortImports.args": [
+    "--profile", "black"
+  ],
+  "[python]": {
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    }
+  }
 }
