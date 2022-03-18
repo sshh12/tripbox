@@ -89,7 +89,7 @@ class Item(BaseModel):
     tags = ArrayField(CharField)
 
     def to_json(self):
-        return dict(title=self.title)
+        return dict(item_id=self.item_id, title=self.title, tags=self.tags)
 
 
 class TripItem(BaseModel):

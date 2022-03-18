@@ -1,46 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { Box, Flex, Text, Link } from "rebass";
 import { useAppEnv } from "../env";
+import { useParams, Link as Lk } from "react-router-dom";
 import TripMembers from "./TripMembers";
+import TripItems from "./TripItems";
 
-const TripView = ({ path }) => {
+const TripView = () => {
+  const { trip_id } = useParams();
   const { api } = useAppEnv();
   const [trip, setTrip] = useState(null);
   const TABS = {
-    Items: TripMembers,
+    Items: TripItems,
     Members: TripMembers,
     Map: TripMembers,
     Timeline: TripMembers,
   };
   const [curTab, setCurTab] = useState(Object.keys(TABS)[0]);
   useEffect(() => {
-    api.get("/api/trips", { trip_id: path[1] }).then((trip) => setTrip(trip));
-  }, [api, path]);
+    api.get("/api/trips", { trip_id: trip_id }).then((trip) => setTrip(trip));
+  }, [api, trip_id]);
   const Page = TABS[curTab];
   return (
     <Box>
       <Flex px={2} color="white" bg="black" alignItems="center">
         <Text p={2} fontWeight="bold">
-          <a style={{ textDecoration: "none", color: "#fff" }} href="/">
+          <Lk style={{ textDecoration: "none", color: "#fff" }} to="/">
             TripBox
-          </a>{" "}
+          </Lk>{" "}
           / {trip?.name}
         </Text>
         <Box mx="auto" />
-        <Link variant="nav" href={"/edit_trip/" + path[1]} color="#fff" mr={3}>
+        <Lk to={"/edit_trip/" + trip_id} style={{ color: "#fff" }}>
           edit
-        </Link>
-        <Link
-          variant="nav"
-          href={"/invite_to_trip/" + path[1]}
-          color="#fff"
-          mr={3}
+        </Lk>
+        <Lk
+          to={"/add_to_trip/" + trip_id}
+          style={{ color: "#fff", marginLeft: "10px" }}
         >
-          invite
-        </Link>
-        <Link variant="nav" href={"/add_to_trip/" + path[1]} color="#fff">
           add item
-        </Link>
+        </Lk>
       </Flex>
       <Flex
         p={2}

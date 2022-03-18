@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Box, Flex, Text } from "rebass";
+import { useParams, Link as Lk } from "react-router-dom";
 import { Label, Input } from "@rebass/forms";
 import { useAppEnv } from "../env";
 
-const TripAdd = ({ path }) => {
+const TripAdd = () => {
+  const { trip_id } = useParams();
   const { api } = useAppEnv();
   const [trip, setTrip] = useState(null);
   useEffect(() => {
-    api.get("/api/trips", { trip_id: path[1] }).then((trip) => setTrip(trip));
-  }, [api, path]);
+    api.get("/api/trips", { trip_id: trip_id }).then((trip) => setTrip(trip));
+  }, [api, trip_id]);
   return (
     <Box>
       <Flex
@@ -19,12 +21,12 @@ const TripAdd = ({ path }) => {
         justifyContent="space-between"
       >
         <Text p={2} fontWeight="bold">
-          <a
+          <Lk
             style={{ textDecoration: "none", color: "#fff" }}
-            href={"/trips/" + path[1]}
+            to={"/trips/" + trip_id}
           >
             {"X"}
-          </a>
+          </Lk>
         </Text>
         <Text mx="auto">Add to {trip?.name}</Text>
         <Text p={2} fontWeight="bold" color="#000">

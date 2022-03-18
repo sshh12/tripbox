@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Flex, Text, Link } from "rebass";
+import { Link as Lk } from "react-router-dom";
 import { useAppEnv } from "../env";
 
 const TripList = () => {
@@ -49,25 +50,30 @@ const TripList = () => {
           </Text>
         </Box>
         {trips.map((trip) => (
-          <Box
-            onClick={() => (window.location.href = "/trips/" + trip.trip_id)}
-            m={20}
-            sx={{
-              px: 4,
-              py: 6,
-              backgroundImage:
-                "url(https://source.unsplash.com/random/1024x768)",
-              backgroundSize: "cover",
-              borderRadius: 8,
-              color: "white",
-              bg: "gray",
-              cursor: "pointer",
-            }}
+          <Lk
+            to={`/trips/${trip.trip_id}`}
+            style={{ textDecoration: "none" }}
+            key={trip.trip_id}
           >
-            <Text textAlign="center" fontSize={[5]}>
-              {trip.name}
-            </Text>
-          </Box>
+            <Box
+              m={20}
+              sx={{
+                px: 4,
+                py: 6,
+                backgroundImage:
+                  "url(https://source.unsplash.com/random/1024x768)",
+                backgroundSize: "cover",
+                borderRadius: 8,
+                color: "white",
+                bg: "gray",
+                cursor: "pointer",
+              }}
+            >
+              <Text textAlign="center" fontSize={[5]}>
+                {trip.name}
+              </Text>
+            </Box>
+          </Lk>
         ))}
       </Box>
     </Box>

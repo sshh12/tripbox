@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Flex, Text, Image, Card } from "rebass";
+import { Link as Lk } from "react-router-dom";
 
 const TripMembers = ({ trip }) => {
   return (
@@ -12,16 +13,17 @@ const TripMembers = ({ trip }) => {
           mb={3}
         >
           <Flex alignItems="center">
-            <Box
-              onClick={() =>
-                (window.location.href = "/invite_to_trip/" + trip?.trip_id)
-              }
+            <Lk
+              to={"/invite_to_trip/" + trip?.trip_id}
+              style={{ textDecoration: "none", color: "#000" }}
             >
-              <Text>
-                <b>Invite Member</b>
-              </Text>
-              <Text>Add someone as a traveller on this trip (can edit)</Text>
-            </Box>
+              <Box>
+                <Text>
+                  <b>Invite Member</b>
+                </Text>
+                <Text>Add someone as a traveller on this trip (can edit)</Text>
+              </Box>
+            </Lk>
           </Flex>
         </Card>
         <Card
@@ -31,17 +33,18 @@ const TripMembers = ({ trip }) => {
           mb={3}
         >
           <Flex alignItems="center">
-            <Box
-              onClick={() =>
-                (window.location.href =
-                  "/invite_to_trip/" + trip?.trip_id + "?observer")
-              }
+            <Lk
+              to={"/invite_to_trip/" + trip?.trip_id + "?observer"}
+              style={{ textDecoration: "none", color: "#000" }}
             >
-              <Text>
-                <b>Invite Observer</b>
-              </Text>
-              <Text>Add an observer to this trip (view only)</Text>
-            </Box>
+              {" "}
+              <Box>
+                <Text>
+                  <b>Invite Observer</b>
+                </Text>
+                <Text>Add an observer to this trip (view only)</Text>
+              </Box>
+            </Lk>
           </Flex>
         </Card>
       </Box>
