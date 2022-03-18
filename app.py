@@ -29,7 +29,6 @@ from tripbox.models import (
 BASE_URL = os.environ["BASE_URL"]
 USE_DEMO_LOGIN = bool(os.environ["USE_DEMO_LOGIN"])
 
-
 app = Flask(__name__, static_folder="./build")
 app.secret_key = os.environ.get("SECRET_KEY")
 app.permanent_session_lifetime = datetime.timedelta(days=60)
@@ -155,8 +154,9 @@ def inbound_email():
 
 def add_item_from_inbound_email(inbox_email, email_data):
     trip = get_or_404(Trip, Trip.inbox_email == inbox_email)
-    title = email_data["subject"]
-    create_item(trip, title)
+    title = email_data["subject"].replace("Fwd: ", "")
+    from_email = json.loads(email_data["envelope"])["from"]
+    create_item(trip, title, tags=["by:" + from_email], props={"email": email_data})
 
 
 if __name__ == "__main__":

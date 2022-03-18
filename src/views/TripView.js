@@ -4,6 +4,8 @@ import { useAppEnv } from "../env";
 import { useParams, Link as Lk } from "react-router-dom";
 import TripMembers from "./TripMembers";
 import TripItems from "./TripItems";
+import TripMap from "./TripMap";
+import TripTimeline from "./TripTimeline";
 
 const TripView = () => {
   const { trip_id } = useParams();
@@ -12,8 +14,8 @@ const TripView = () => {
   const TABS = {
     Items: TripItems,
     Members: TripMembers,
-    Map: TripMembers,
-    Timeline: TripMembers,
+    Map: TripMap,
+    Timeline: TripTimeline,
   };
   const [curTab, setCurTab] = useState(Object.keys(TABS)[0]);
   useEffect(() => {

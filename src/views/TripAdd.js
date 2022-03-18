@@ -3,6 +3,7 @@ import { Box, Flex, Text } from "rebass";
 import { useParams, Link as Lk } from "react-router-dom";
 import { Label, Input } from "@rebass/forms";
 import { useAppEnv } from "../env";
+import CopyInput from "../components/CopyInput";
 
 const TripAdd = () => {
   const { trip_id } = useParams();
@@ -36,16 +37,7 @@ const TripAdd = () => {
       <Box p={2}>
         <Box my={3}>
           <Label htmlFor="email">Forward trip related email to</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={trip?.inbox_email}
-            onClick={(e) => {
-              e.target.select();
-              document.execCommand("copy");
-            }}
-          />
+          <CopyInput name="email" value={trip?.inbox_email} />
         </Box>
         <hr />
       </Box>
