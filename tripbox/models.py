@@ -14,7 +14,7 @@ from peewee import (
     IntegrityError,
     Model,
 )
-from playhouse.postgres_ext import PostgresqlExtDatabase
+from playhouse.postgres_ext import ArrayField, PostgresqlExtDatabase
 
 DATABASE_URL = urlparse(os.environ["DATABASE_URL"])
 
@@ -62,8 +62,13 @@ class Trip(BaseModel):
         trip_items = [
             trip_item.item.to_json() for trip_item in TripItem.select().join(Item).where(TripItem.trip == self)
         ]
+        user_trips = [
+            {**user_trip.user.to_json(), **user_trip.to_json()}
+            for user_trip in UserTrip.select().join(User).where(UserTrip.trip == self)
+        ]
         trip_json = self.to_json()
         trip_json["items"] = trip_items
+        trip_json["users"] = user_trips
         return trip_json
 
 
@@ -73,11 +78,15 @@ class UserTrip(BaseModel):
     owner = BooleanField(default=False)
     viewer_only = BooleanField(default=False)
 
+    def to_json(self):
+        return dict(owner=self.owner, viewer_only=self.viewer_only)
+
 
 class Item(BaseModel):
     item_id = AutoField()
     title = CharField()
     created_at = DateTimeField(default=datetime.datetime.now)
+    tags = ArrayField(CharField)
 
     def to_json(self):
         return dict(title=self.title)
@@ -137,6 +146,12 @@ def create_tables():
         database.create_tables(MODELS)
     user = get_or_create_user("example@example.com")
     trip = create_trip(user, "Test Trip")
+    items = [
+        Item.create(title="Confirmation for The Lincoln", tags=["hotel"]),
+        Item.create(title="Airline Ticket Confirmation", tags=["flight"]),
+    ]
+    for item in items:
+        TripItem.create(trip=trip, item=item)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Flex, Text, Link } from "rebass";
 import { useAppEnv } from "../env";
 
-const TripsView = () => {
+const TripList = () => {
   const { user, api } = useAppEnv();
   const [trips, setTrips] = useState([]);
   useEffect(() => {
@@ -74,4 +74,4 @@ const TripsView = () => {
   );
 };
 
-export default TripsView;
+export default TripList;

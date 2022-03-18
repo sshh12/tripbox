@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Box, Flex, Text, Link } from "rebass";
 import { useAppEnv } from "../env";
+import TripMembers from "./TripMembers";
 
 const TripView = ({ path }) => {
   const { api } = useAppEnv();
   const [trip, setTrip] = useState(null);
   const TABS = {
-    Items: null,
-    Members: null,
-    Map: null,
-    Timeline: null,
+    Items: TripMembers,
+    Members: TripMembers,
+    Map: TripMembers,
+    Timeline: TripMembers,
   };
   const [curTab, setCurTab] = useState(Object.keys(TABS)[0]);
   useEffect(() => {
     api.get("/api/trips", { trip_id: path[1] }).then((trip) => setTrip(trip));
   }, [api, path]);
+  const Page = TABS[curTab];
   return (
     <Box>
       <Flex px={2} color="white" bg="black" alignItems="center">
@@ -28,7 +30,12 @@ const TripView = ({ path }) => {
         <Link variant="nav" href={"/edit_trip/" + path[1]} color="#fff" mr={3}>
           edit
         </Link>
-        <Link variant="nav" href={"/edit_trip/" + path[1]} color="#fff" mr={3}>
+        <Link
+          variant="nav"
+          href={"/invite_to_trip/" + path[1]}
+          color="#fff"
+          mr={3}
+        >
           invite
         </Link>
         <Link variant="nav" href={"/add_to_trip/" + path[1]} color="#fff">
@@ -54,7 +61,7 @@ const TripView = ({ path }) => {
           </Link>
         ))}
       </Flex>
-      {JSON.stringify(trip)}
+      {trip && <Page trip={trip} />}
     </Box>
   );
 };

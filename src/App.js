@@ -4,7 +4,7 @@ import theme from "./theme";
 import { Box } from "rebass";
 import { AppEnv, useAppEnv } from "./env";
 import Login from "./views/Login";
-import TripsView from "./views/TripsView";
+import TripList from "./views/TripList";
 import TripView from "./views/TripView";
 import TripAdd from "./views/TripAdd";
 
@@ -21,7 +21,7 @@ const App = () => {
 const Router = () => {
   const path = window.location.pathname.substring(1).split("/");
   const ROUTES = {
-    "": TripsView,
+    "": TripList,
     trips: TripView,
     add_to_trip: TripAdd,
   };
