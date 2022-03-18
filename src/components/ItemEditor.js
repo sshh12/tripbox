@@ -30,7 +30,11 @@ export const PROPS = {
       <Box color="grey">This item was created from an email.</Box>
     ),
     render: ({ item }) => (
-      <iframe style={{ width: "100%" }} srcdoc={item.props.email?.html} />
+      <iframe
+        style={{ width: "100%" }}
+        title={item.title}
+        srcdoc={item.props.email?.html}
+      />
     ),
     defaultValue: {},
   },

@@ -90,12 +90,12 @@ const TagCard = ({ trip, tag, items }) => {
           onClick={() => setExpanded((expanded + 1) % 3)}
           sx={{ cursor: "pointer" }}
         >
-          {expanded == 0 && <b>[+]</b>}
-          {expanded == 1 && <b>[+]</b>}
-          {expanded == 2 && <b>[-]</b>}
+          {expanded === 0 && <b>[+]</b>}
+          {expanded === 1 && <b>[+]</b>}
+          {expanded === 2 && <b>[-]</b>}
         </Text>
       </Flex>
-      <Flex alignItems="center" px={expanded == 2 ? 1 : 0}>
+      <Flex alignItems="center" px={expanded === 2 ? 1 : 0}>
         {expanded === 1 && (
           <Box>
             <ul style={{ paddingLeft: "30px" }}>

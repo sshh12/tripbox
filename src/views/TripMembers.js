@@ -34,7 +34,7 @@ const TripMembers = ({ trip }) => {
         >
           <Flex alignItems="center">
             <Lk
-              to={"/invite_to_trip/" + trip?.trip_id + "?observer"}
+              to={"/invite_obs_to_trip/" + trip?.trip_id}
               style={{ textDecoration: "none", color: "#000" }}
             >
               {" "}

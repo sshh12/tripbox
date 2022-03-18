@@ -12,7 +12,7 @@ const TripModal = ({ contents, renderTitle }) => {
   }, [api, trip_id]);
   let item = null;
   if (item_id && trip) {
-    item = trip.items.find((it) => it.item_id == item_id);
+    item = trip.items.find((it) => it.item_id === item_id);
   }
   const Page = contents;
   let title = null;
@@ -26,7 +26,7 @@ const TripModal = ({ contents, renderTitle }) => {
     }
     if (renderedTitle.length === 0) {
       renderTitle = "item";
-    } else if (renderedTitle != title) {
+    } else if (renderedTitle !== title) {
       renderedTitle += "...";
     }
   }

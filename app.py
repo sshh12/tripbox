@@ -20,6 +20,7 @@ from tripbox.models import (
     Item,
     Trip,
     User,
+    UserTrip,
     create_item,
     create_trip,
     database,
@@ -141,7 +142,8 @@ def get_trip():
         trip = get_or_404(Trip, Trip.trip_id == trip_id)
         return jsonify(trip.to_json_with_items())
     else:
-        trips = [trip.to_json() for trip in Trip.select()]
+        user = get_current_user()
+        trips = [trip.to_json() for trip in Trip.select().join(UserTrip).where(UserTrip.user == user)]
         return jsonify(trips)
 
 
