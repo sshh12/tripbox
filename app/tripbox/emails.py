@@ -8,6 +8,6 @@ sg = SendGridAPIClient(os.environ.get("SENDGRID_API_KEY"))
 
 
 def send_email(to_email, subject, html_content):
-    message = Mail(from_email=FROM_EMAIL, to_emails=to_email, subject=subject, html_content=html_content,)
+    message = Mail(from_email=FROM_EMAIL, to_emails=to_email, subject=subject, html_content=html_content)
     resp = sg.send(message)
-    print(resp.status_code, resp.body, resp.headers)
+    return resp

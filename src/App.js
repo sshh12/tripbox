@@ -4,6 +4,9 @@ import theme from "./theme";
 import { Box } from "rebass";
 import { AppEnv, useAppEnv } from "./env";
 import Login from "./views/Login";
+import TripsView from "./views/TripsView";
+import TripView from "./views/TripView";
+import TripAdd from "./views/TripAdd";
 
 const App = () => {
   return (
@@ -16,14 +19,20 @@ const App = () => {
 };
 
 const Router = () => {
-  const path = window.location.pathname;
+  const path = window.location.pathname.substring(1).split("/");
+  const ROUTES = {
+    "": TripsView,
+    trips: TripView,
+    add_to_trip: TripAdd,
+  };
   const { hasCtx, user } = useAppEnv();
   if (!hasCtx) {
     return <Box>Loading...</Box>;
-  } else if (path === "/" && !user) {
+  } else if (!user) {
     return <Login />;
   } else {
-    return <Box>{JSON.stringify(user)}</Box>;
+    const Page = ROUTES[path[0]];
+    return <Page path={path} />;
   }
 };
 

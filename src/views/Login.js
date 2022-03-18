@@ -42,7 +42,7 @@ const Login = () => {
                     setInterval(async () => {
                       const pollResp = await api.get("/api/auth_poll");
                       if (pollResp.success) {
-                        window.location = "/";
+                        window.location.href = "/";
                       }
                     }, 1000);
                   }}
