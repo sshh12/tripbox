@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Input } from "@rebass/forms";
 import { Box, Flex, Text, Card } from "rebass";
 import { Link as Lk } from "react-router-dom";
-import { tagToColor, tagToLabel } from "../tags";
+import { tagToColor, tagToLabel } from "../util";
 import CopyInput from "../components/CopyInput";
+import { useAppEnv } from "../env";
+import { PROPS } from "../components/ItemEditor";
 
 const TripItems = ({ trip }) => {
   const itemsByTag = {};
@@ -12,7 +13,6 @@ const TripItems = ({ trip }) => {
       if (!(tag in itemsByTag)) {
         itemsByTag[tag] = [];
       }
-      itemsByTag[tag].push(item);
       itemsByTag[tag].push(item);
     }
   }
@@ -58,15 +58,21 @@ const TripItems = ({ trip }) => {
       </Box>
       {tagsSorted.map((tag) => (
         <Box key={tag}>
-          <TagCard tag={tag} items={itemsByTag[tag]} />
+          <TagCard trip={trip} tag={tag} items={itemsByTag[tag]} />
         </Box>
       ))}
     </Box>
   );
 };
 
-const TagCard = ({ tag, items }) => {
-  const [expanded, setExpanded] = useState(1);
+const TagCard = ({ trip, tag, items }) => {
+  const { getKey, setKey } = useAppEnv();
+  const expandKey = `${trip.trip_id}:${tag}:expand`;
+  const [expanded, _setExpanded] = useState(getKey(expandKey) || 0);
+  const setExpanded = (val) => {
+    _setExpanded(val);
+    setKey(expandKey, val);
+  };
   return (
     <Card sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }} p={0} mb={3}>
       <Flex
@@ -92,7 +98,7 @@ const TagCard = ({ tag, items }) => {
       <Flex alignItems="center" px={expanded == 2 ? 1 : 0}>
         {expanded === 1 && (
           <Box>
-            <ul style={{ paddingLeft: "20px" }}>
+            <ul style={{ paddingLeft: "30px" }}>
               {items.map((item) => (
                 <li key={item.item_id}>{item.title}</li>
               ))}
@@ -102,7 +108,7 @@ const TagCard = ({ tag, items }) => {
         {expanded === 2 && (
           <Box width={1}>
             {items.map((item) => (
-              <ItemCard tag={tag} key={item.item_id} item={item} />
+              <ItemCard trip={trip} tag={tag} key={item.item_id} item={item} />
             ))}
           </Box>
         )}
@@ -111,7 +117,7 @@ const TagCard = ({ tag, items }) => {
   );
 };
 
-const ItemCard = ({ tag, item }) => {
+const ItemCard = ({ trip, tag, item }) => {
   return (
     <Card width={1} sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }}>
       <Flex
@@ -120,14 +126,29 @@ const ItemCard = ({ tag, item }) => {
         width={1}
         p={1}
         alignItems="center"
+        justifyContent={"space-between"}
       >
-        <Text width={1}>
+        <Text width={0.8}>
           <b>{item.title}</b>
         </Text>
+        <Text textAlign="right" ml={"auto"} width={0.2}>
+          <Lk
+            to={`/trips/${trip.trip_id}/edit_item/${item.item_id}`}
+            style={{ textDecoration: "none" }}
+          >
+            <b>✏️</b>
+          </Lk>
+        </Text>
       </Flex>
-      {item.props.email && (
-        <iframe style={{ width: "100%" }} srcdoc={item.props.email?.html} />
-      )}
+      <Box>
+        {Object.keys(item.props).map((propName) => {
+          return PROPS[propName].render({
+            item: item,
+            name: PROPS[propName].name,
+            key: propName,
+          });
+        })}
+      </Box>
     </Card>
   );
 };

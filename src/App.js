@@ -1,3 +1,4 @@
+import "react-selectize/themes/index.css";
 import { ThemeProvider } from "@emotion/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import theme from "./theme";
@@ -7,6 +8,7 @@ import Login from "./views/Login";
 import TripList from "./views/TripList";
 import TripView from "./views/TripView";
 import TripAdd from "./views/TripAdd";
+import ItemEdit from "./views/ItemEdit";
 
 const App = () => {
   return (
@@ -32,6 +34,10 @@ const Router = () => {
         <Route exact path="/" element={<TripList />}></Route>
         <Route path="/trips/:trip_id" element={<TripView />}></Route>
         <Route path="/add_to_trip/:trip_id" element={<TripAdd />}></Route>
+        <Route
+          path="/trips/:trip_id/edit_item/:item_id"
+          element={<ItemEdit />}
+        ></Route>
       </Routes>
     );
   }

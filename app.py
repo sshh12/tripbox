@@ -17,6 +17,7 @@ from flask import (
 from tripbox import emails
 from tripbox.models import (
     AuthToken,
+    Item,
     Trip,
     User,
     create_item,
@@ -51,6 +52,7 @@ def after_request(resp):
         resp.headers["Access-Control-Allow-Origin"] = request.origin
         resp.headers["Access-Control-Allow-Credentials"] = "true"
         resp.headers["Access-Control-Allow-Headers"] = "content-type"
+        resp.headers["Access-Control-Allow-Methods"] = "PUT,POST,GET"
     return resp
 
 
@@ -141,6 +143,16 @@ def get_trip():
     else:
         trips = [trip.to_json() for trip in Trip.select()]
         return jsonify(trips)
+
+
+@app.route("/api/items", methods=["PUT"])
+def put_item():
+    item_id = request.args.get("item_id")
+    item = get_or_404(Item, Item.item_id == item_id)
+    item.title = request.json["title"]
+    item.props = request.json["props"]
+    item.save()
+    return jsonify(item.to_json())
 
 
 @app.route("/api/inbound_email", methods=["POST"])

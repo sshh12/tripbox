@@ -1,47 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { Box, Flex, Text } from "rebass";
-import { useParams, Link as Lk } from "react-router-dom";
-import { Label, Input } from "@rebass/forms";
-import { useAppEnv } from "../env";
+import React from "react";
+import { Box } from "rebass";
+import { Label } from "@rebass/forms";
 import CopyInput from "../components/CopyInput";
+import TripModel from "../components/TripModal";
 
 const TripAdd = () => {
-  const { trip_id } = useParams();
-  const { api } = useAppEnv();
-  const [trip, setTrip] = useState(null);
-  useEffect(() => {
-    api.get("/api/trips", { trip_id: trip_id }).then((trip) => setTrip(trip));
-  }, [api, trip_id]);
   return (
-    <Box>
-      <Flex
-        px={2}
-        color="white"
-        bg="black"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Text p={2} fontWeight="bold">
-          <Lk
-            style={{ textDecoration: "none", color: "#fff" }}
-            to={"/trips/" + trip_id}
-          >
-            {"X"}
-          </Lk>
-        </Text>
-        <Text mx="auto">Add to {trip?.name}</Text>
-        <Text p={2} fontWeight="bold" color="#000">
-          {"X"}
-        </Text>
-      </Flex>
-      <Box p={2}>
-        <Box my={3}>
-          <Label htmlFor="email">Forward trip related email to</Label>
-          <CopyInput name="email" value={trip?.inbox_email} />
+    <TripModel
+      renderTitle={({ trip }) => `Add to ${trip.name}`}
+      contents={({ trip }) => (
+        <Box p={2}>
+          <Box my={3}>
+            <Label htmlFor="email">Forward trip related email to</Label>
+            <CopyInput name="email" value={trip.inbox_email} />
+          </Box>
+          <hr />
         </Box>
-        <hr />
-      </Box>
-    </Box>
+      )}
+    />
   );
 };
 

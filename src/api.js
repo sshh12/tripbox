@@ -14,6 +14,18 @@ let post = async (path, data = {}) => {
   return await resp.json();
 };
 
+let put = async (path, data = {}) => {
+  let resp = await fetch(BASE_URL + path, {
+    method: "PUT",
+    body: JSON.stringify(data),
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return await resp.json();
+};
+
 let get = async (path, data = null) => {
   if (data) {
     path +=
@@ -26,6 +38,6 @@ let get = async (path, data = null) => {
   return await resp.json();
 };
 
-const API = { post, get };
+const API = { post, get, put };
 
 export default API;
