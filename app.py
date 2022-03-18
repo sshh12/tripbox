@@ -13,15 +13,13 @@ from tripbox.models import (
     AuthToken,
     User,
     Trip,
-    TripItem,
-    Item,
 )
 from tripbox import emails
 
 BASE_URL = os.environ.get("BASE_URL", "http://localhost:5000")
 
 
-app = Flask(__name__, static_folder="../build")
+app = Flask(__name__, static_folder="./build")
 app.secret_key = os.environ.get("SECRET_KEY")
 app.permanent_session_lifetime = datetime.timedelta(days=60)
 
