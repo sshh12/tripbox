@@ -3,6 +3,7 @@ import { Box, Button, Text, Flex } from "rebass";
 import { Label, Input, Textarea } from "@rebass/forms";
 import { SimpleSelect } from "react-selectize";
 import { useAppEnv } from "../env";
+import FullScreenLink from "./FullScreenLink";
 
 let deleteItemProp = (item, setItem, propName) => {
   const newProps = Object.assign({}, item.props);
@@ -29,12 +30,20 @@ export const PROPS = {
     renderEditor: ({ item, setItem }) => (
       <Box color="grey">This item was created from an email.</Box>
     ),
-    render: ({ item }) => (
-      <iframe
-        style={{ width: "100%" }}
-        title={item.title}
-        srcdoc={item.props.email?.html}
-      />
+    render: ({ item, name, key }) => (
+      <Text>
+        <b>{name}</b>:{" "}
+        <FullScreenLink
+          text="Open Email"
+          viewer={() => (
+            <iframe
+              style={{ width: "100%", height: "100%" }}
+              title={item.title}
+              srcdoc={item.props.email?.html}
+            />
+          )}
+        />
+      </Text>
     ),
     defaultValue: {},
   },
@@ -50,7 +59,11 @@ export const PROPS = {
         />
       </Box>
     ),
-    render: ({ item }) => <Text>{item.props.desc}</Text>,
+    render: ({ item, name, key }) => (
+      <Text>
+        <b>{name}</b>: {item.props[key]}
+      </Text>
+    ),
     defaultValue: "",
   },
   confirmation: {
@@ -69,7 +82,7 @@ export const PROPS = {
     ),
     render: ({ item, name, key }) => (
       <Text>
-        <b>{name}</b>: {item.props.confirmation}
+        <b>{name}</b>: {item.props[key]}
       </Text>
     ),
     defaultValue: "",
@@ -82,8 +95,7 @@ const ItemEditor = ({ trip, item }) => {
   useEffect(() => {
     setEditItem(item);
   }, [item]);
-  const fieldNames = Object.keys(PROPS);
-  fieldNames.sort((a, b) => a.localeCompare(b));
+  const propNames = Object.keys(PROPS);
   return (
     <Box p={2}>
       <Box pb={2}>
@@ -99,7 +111,7 @@ const ItemEditor = ({ trip, item }) => {
       </Box>
       <hr />
       <Box py={2}>
-        {fieldNames
+        {propNames
           .filter((fieldName) =>
             Object.keys(editItem.props).includes(fieldName)
           )
@@ -141,7 +153,7 @@ const ItemEditor = ({ trip, item }) => {
           }}
           value={null}
         >
-          {fieldNames
+          {propNames
             .filter(
               (fieldName) =>
                 PROPS[fieldName].addable &&

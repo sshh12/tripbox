@@ -117,12 +117,11 @@ const TagCard = ({ trip, tag, items }) => {
   );
 };
 
-const ItemCard = ({ trip, tag, item }) => {
+const ItemCard = ({ trip, item }) => {
   return (
-    <Card width={1} sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }}>
+    <Card width={1} p={1} sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }}>
       <Flex
         color={"#000"}
-        sx={{ outline: tagToColor(tag) + " solid" }}
         width={1}
         p={1}
         alignItems="center"
@@ -140,7 +139,7 @@ const ItemCard = ({ trip, tag, item }) => {
           </Lk>
         </Text>
       </Flex>
-      <Box>
+      <Box pl={3} pb={2}>
         {Object.keys(item.props).map((propName) => {
           return PROPS[propName].render({
             item: item,
