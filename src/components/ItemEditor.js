@@ -46,7 +46,7 @@ export const PROPS = {
       </Box>
     ),
     render: ({ item, name, key }) => (
-      <Text>
+      <Text key={key}>
         <b>{name}</b>:{" "}
         <FullScreenLink
           text="Open Email"
@@ -75,7 +75,7 @@ export const PROPS = {
       </Box>
     ),
     render: ({ item, name, key }) => (
-      <Text>
+      <Text key={key}>
         <b>{name}</b>: {item.props[key]}
       </Text>
     ),
@@ -96,7 +96,7 @@ export const PROPS = {
       </Box>
     ),
     render: ({ item, name, key }) => (
-      <Text>
+      <Text key={key}>
         <b>{name}</b>: {item.props[key]}
       </Text>
     ),
@@ -127,15 +127,18 @@ const ItemEditor = ({ trip, item }) => {
         <Label htmlFor="title">Title</Label>
         <Input
           id="title"
-          name="text"
-          type="title"
+          name="title"
+          type="text"
           placeholder="Item Title"
           value={editItem.title}
           onChange={(e) => setEditItem({ ...editItem, title: e.target.value })}
         />
       </Box>
+      <hr />
       <Box>
+        <Label htmlFor="tags">Tags</Label>
         <MultiSelect
+          name="tags"
           style={{ width: "100%" }}
           placeholder={"Tags"}
           defaultValues={editItem.tags.map((tag) => ({

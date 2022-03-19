@@ -21,6 +21,7 @@ from tripbox.models import (
     Trip,
     User,
     UserTrip,
+    add_user_to_trip,
     create_item,
     create_trip,
     database,
@@ -65,7 +66,7 @@ def auth_user(session, email):
     user = get_or_create_user(email)
     session.permanent = True
     session["user_email"] = email
-    print("auth" + email, user)
+    return user
 
 
 @app.route("/", defaults={"path": ""})
@@ -77,15 +78,10 @@ def serve(path):
         return send_from_directory(app.static_folder, "index.html")
 
 
-@app.route("/api/login", methods=["POST"])
-def login():
-    if USE_DEMO_LOGIN:
-        auth_user(session, "example@example.com")
-        return
+def send_login_email(email):
     token = gen_token()
     secret = gen_token()
     session["auth_token"] = token
-    email = request.json["email"]
     AuthToken.create(auth_token=token, auth_secret=secret, email=email)
     emails.send_email(
         email,
@@ -94,6 +90,30 @@ def login():
             BASE_URL + "/api/auth_with_secret?secret=" + secret
         ),
     )
+
+
+def send_invite_email(from_email, email, trip, viewer_only):
+    token = gen_token()
+    secret = gen_token()
+    AuthToken.create(
+        auth_token=token, auth_secret=secret, email=email, join_trip_id=trip.trip_id, join_as_viewer=viewer_only
+    )
+    emails.send_email(
+        email,
+        "Login to TripBox to join " + trip.name,
+        'You were invited by {} to join TripBox. Click this link to login: <a href="{}">Login to TripBox</a>'.format(
+            from_email, BASE_URL + "/api/auth_with_secret?secret=" + secret
+        ),
+    )
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    if USE_DEMO_LOGIN:
+        auth_user(session, "example@example.com")
+        return
+    email = request.json["email"]
+    send_login_email(email)
     return jsonify(dict(success=True))
 
 
@@ -104,7 +124,8 @@ def auth_with_secret():
     if not auth_token.authed:
         auth_token.authed = True
         auth_token.save()
-    auth_user(session, auth_token.email)
+    user = auth_user(session, auth_token.email)
+    add_user_to_trip(user, auth_token.join_trip_id, viewer_only=auth_token.join_as_viewer)
     return redirect(BASE_URL)
 
 
@@ -156,6 +177,17 @@ def put_item():
     item.tags = request.json["tags"]
     item.save()
     return jsonify(item.to_json())
+
+
+@app.route("/api/invite", methods=["POST"])
+def invite():
+    user = get_current_user()
+    trip_id = request.json.get("trip_id")
+    trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    email = request.json.get("email")
+    viewer_only = request.json.get("viewer_only")
+    send_invite_email(user.email, email, trip, viewer_only)
+    return jsonify(trip.to_json_with_items())
 
 
 @app.route("/api/inbound_email", methods=["POST"])

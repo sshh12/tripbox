@@ -32,14 +32,6 @@ class BaseModel(Model):
         database = database
 
 
-class AuthToken(BaseModel):
-    auth_token = CharField(unique=True)
-    auth_secret = CharField(unique=True)
-    email = CharField()
-    authed = BooleanField(default=False)
-    created_at = DateTimeField(default=datetime.datetime.now)
-
-
 class User(BaseModel):
     email = CharField(unique=True)
     username = CharField()
@@ -98,6 +90,16 @@ class TripItem(BaseModel):
     item = ForeignKeyField(Item)
 
 
+class AuthToken(BaseModel):
+    auth_token = CharField(unique=True)
+    auth_secret = CharField(unique=True)
+    email = CharField()
+    authed = BooleanField(default=False)
+    created_at = DateTimeField(default=datetime.datetime.now)
+    join_trip_id = ForeignKeyField(Trip, null=True)
+    join_as_viewer = BooleanField(null=True)
+
+
 def get_trip_inbox(trip_name):
     rand = secrets.token_urlsafe(6).replace("-", "").replace("_", "")
     clean_name = re.sub("\W", "", trip_name)
@@ -116,8 +118,12 @@ def get_or_404(model, *exprs):
 def create_trip(user, name):
     trip_inbox = get_trip_inbox(name)
     trip = Trip.create(name=name, inbox_email=trip_inbox)
-    UserTrip.create(user=user, trip=trip, owner=True)
+    add_user_to_trip(user=user, trip=trip, owner=True)
     return trip
+
+
+def add_user_to_trip(user, trip, **opts):
+    return UserTrip.create(user=user, trip=trip, **opts)
 
 
 def create_item(trip, title, tags=[], props={}):
