@@ -12,7 +12,7 @@ const TripModal = ({ contents, renderTitle }) => {
   }, [api, trip_id]);
   let item = null;
   if (item_id && trip) {
-    item = trip.items.find((it) => it.item_id === item_id);
+    item = trip.items.find((it) => it.item_id === parseInt(item_id));
   }
   const Page = contents;
   let title = null;

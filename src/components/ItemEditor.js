@@ -3,6 +3,9 @@ import { Box, Button, Text, Flex } from "rebass";
 import { Label, Input, Textarea } from "@rebass/forms";
 import { SimpleSelect } from "react-selectize";
 import { useAppEnv } from "../env";
+import { MultiSelect } from "react-selectize";
+import { tagToLabel } from "../util";
+import { useNavigate } from "react-router-dom";
 import FullScreenLink from "./FullScreenLink";
 
 let deleteItemProp = (item, setItem, propName) => {
@@ -28,7 +31,19 @@ export const PROPS = {
     name: "Email",
     addable: false,
     renderEditor: ({ item, setItem }) => (
-      <Box color="grey">This item was created from an email.</Box>
+      <Box color="grey">
+        This item was created from an email.{" "}
+        <FullScreenLink
+          text="Open Email"
+          viewer={() => (
+            <iframe
+              style={{ width: "100%", height: "100%" }}
+              title={item.title}
+              srcdoc={item.props.email?.html}
+            />
+          )}
+        />
+      </Box>
     ),
     render: ({ item, name, key }) => (
       <Text>
@@ -90,12 +105,22 @@ export const PROPS = {
 };
 
 const ItemEditor = ({ trip, item }) => {
+  const [loading, setLoading] = useState(false);
   const { api, refresh } = useAppEnv();
   const [editItem, setEditItem] = useState(item);
   useEffect(() => {
     setEditItem(item);
   }, [item]);
   const propNames = Object.keys(PROPS);
+  const allTags = trip.items.reduce((acc, cur) => {
+    for (let tag of cur.tags) {
+      if (!acc.includes(tag)) {
+        acc.push(tag);
+      }
+      return acc;
+    }
+  }, []);
+  const nav = useNavigate();
   return (
     <Box p={2}>
       <Box pb={2}>
@@ -107,6 +132,26 @@ const ItemEditor = ({ trip, item }) => {
           placeholder="Item Title"
           value={editItem.title}
           onChange={(e) => setEditItem({ ...editItem, title: e.target.value })}
+        />
+      </Box>
+      <Box>
+        <MultiSelect
+          style={{ width: "100%" }}
+          placeholder={"Tags"}
+          defaultValues={editItem.tags.map((tag) => ({
+            value: tag,
+            label: tagToLabel(tag),
+          }))}
+          options={allTags.map((tag) => ({
+            value: tag,
+            label: tagToLabel(tag),
+          }))}
+          onValuesChange={(newVal) =>
+            setEditItem({ ...editItem, tags: newVal.map((v) => v.value) })
+          }
+          createFromSearch={(opts, val, query) => {
+            return { value: query, label: tagToLabel(query) };
+          }}
         />
       </Box>
       <hr />
@@ -167,16 +212,20 @@ const ItemEditor = ({ trip, item }) => {
         </SimpleSelect>
       </Box>
       <Box mt={4}>
-        <Button
-          sx={{ cursor: "pointer" }}
-          onClick={async () => {
-            await api.put("/api/items?item_id=" + item.item_id, editItem);
-            refresh();
-          }}
-          bg="#07c"
-        >
-          Save Changes
-        </Button>
+        {!loading && (
+          <Button
+            sx={{ cursor: "pointer" }}
+            onClick={async () => {
+              setLoading(true);
+              await api.put("/api/items?item_id=" + item.item_id, editItem);
+              refresh();
+              nav("/trips/" + trip.trip_id);
+            }}
+            bg="#07c"
+          >
+            Save Changes
+          </Button>
+        )}
       </Box>
     </Box>
   );

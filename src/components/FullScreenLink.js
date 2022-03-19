@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Flex, Text } from "rebass";
 
 const FullScreenViewer = ({ text, viewer }) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const Page = viewer;
   if (!open) {
     return (

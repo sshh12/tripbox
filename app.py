@@ -153,6 +153,7 @@ def put_item():
     item = get_or_404(Item, Item.item_id == item_id)
     item.title = request.json["title"]
     item.props = request.json["props"]
+    item.tags = request.json["tags"]
     item.save()
     return jsonify(item.to_json())
 

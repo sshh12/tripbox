@@ -19,7 +19,7 @@ export let tagToColor = (tag) => {
 
 export let tagToLabel = (tag) => {
   if (tag.includes(":")) {
-    return <>{tag.split(":")[1]}</>;
+    return tag.split(":")[1];
   }
-  return <>{tag}</>;
+  return tag;
 };
