@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button, Text, Flex } from "rebass";
-import { Label, Input, Textarea } from "@rebass/forms";
+import { Label, Input } from "@rebass/forms";
 import { SimpleSelect } from "react-selectize";
 import { useAppEnv } from "../env";
 import { MultiSelect } from "react-selectize";
@@ -24,6 +24,28 @@ let setItemProp = (item, setItem, propName, propVal) => {
     ...item,
     props: newProps,
   });
+};
+
+let createTextProp = (propKey, name, placeholder) => {
+  return {
+    name: name,
+    addable: true,
+    renderEditor: ({ item, setItem }) => (
+      <Box>
+        <Input
+          placeholder={placeholder}
+          value={item.props[propKey]}
+          onChange={(e) => setItemProp(item, setItem, propKey, e.target.value)}
+        />
+      </Box>
+    ),
+    render: ({ item, name, key }) => (
+      <Text key={key}>
+        <b>{name}</b>: {item.props[key]}
+      </Text>
+    ),
+    defaultValue: "",
+  };
 };
 
 export const PROPS = {
@@ -62,46 +84,10 @@ export const PROPS = {
     ),
     defaultValue: {},
   },
-  desc: {
-    name: "Description",
-    addable: true,
-    renderEditor: ({ item, setItem }) => (
-      <Box>
-        <Textarea
-          placeholder="..."
-          value={item.props.desc}
-          onChange={(e) => setItemProp(item, setItem, "desc", e.target.value)}
-        />
-      </Box>
-    ),
-    render: ({ item, name, key }) => (
-      <Text key={key}>
-        <b>{name}</b>: {item.props[key]}
-      </Text>
-    ),
-    defaultValue: "",
-  },
-  confirmation: {
-    name: "Confirmation #",
-    addable: true,
-    renderEditor: ({ item, setItem }) => (
-      <Box>
-        <Input
-          placeholder="ABC123"
-          value={item.props.confirmation}
-          onChange={(e) =>
-            setItemProp(item, setItem, "confirmation", e.target.value)
-          }
-        />
-      </Box>
-    ),
-    render: ({ item, name, key }) => (
-      <Text key={key}>
-        <b>{name}</b>: {item.props[key]}
-      </Text>
-    ),
-    defaultValue: "",
-  },
+  desc: createTextProp("desc", "Description", "Description..."),
+  confirmation: createTextProp("confirmation", "Confirmation #", "ABC123"),
+  note: createTextProp("note", "Note", "Note..."),
+  fullname: createTextProp("fullname", "Full Name", "John Smith"),
 };
 
 const ItemEditor = ({ trip, item }) => {
