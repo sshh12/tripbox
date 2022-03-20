@@ -9,6 +9,7 @@ const CopyInput = ({ name, value, ...props }) => {
       name={name}
       type={name}
       value={value}
+      onChange={() => {}}
       onClick={(e) => {
         e.target.select();
         document.execCommand("copy");

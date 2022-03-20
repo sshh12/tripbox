@@ -10,6 +10,7 @@ from tripbox.models import (
     AuthToken,
     Item,
     Trip,
+    TripItem,
     User,
     UserTrip,
     add_user_to_trip,
@@ -45,7 +46,7 @@ def after_request(resp):
         resp.headers["Access-Control-Allow-Origin"] = request.origin
         resp.headers["Access-Control-Allow-Credentials"] = "true"
         resp.headers["Access-Control-Allow-Headers"] = "content-type"
-        resp.headers["Access-Control-Allow-Methods"] = "PUT,POST,GET"
+        resp.headers["Access-Control-Allow-Methods"] = "PUT,POST,GET,DELETE"
     return resp
 
 
@@ -168,6 +169,16 @@ def put_item():
     item.tags = request.json["tags"]
     item.save()
     return jsonify(item.to_json())
+
+
+@app.route("/api/items", methods=["DELETE"])
+def delete_item():
+    item_id = request.args.get("item_id")
+    item = get_or_404(Item, Item.item_id == item_id)
+    with database.atomic():
+        TripItem.delete().where(TripItem.item == item).execute()
+        item.delete_instance()
+    return jsonify(dict(success=True))
 
 
 @app.route("/api/invite", methods=["POST"])

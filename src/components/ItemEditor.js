@@ -284,6 +284,28 @@ const ItemEditor = ({ trip, item }) => {
             Save Changes
           </Button>
         )}
+        {!loading && (
+          <Button
+            ml={2}
+            sx={{ cursor: "pointer" }}
+            onClick={async () => {
+              if (
+                !window.confirm(
+                  "Are you sure you want to delete this? It cannot be undone."
+                )
+              ) {
+                return;
+              }
+              setLoading(true);
+              await api.del("/api/items?item_id=" + item.item_id);
+              refresh();
+              nav("/trips/" + trip.trip_id);
+            }}
+            bg="red"
+          >
+            Delete
+          </Button>
+        )}
       </Box>
     </Box>
   );

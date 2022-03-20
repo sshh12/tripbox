@@ -34,6 +34,21 @@ let put = async (path, data = {}) => {
   return await resp.json();
 };
 
+let del = async (path, params = null) => {
+  if (params) {
+    path +=
+      "?" +
+      Object.entries(params)
+        .map((kv) => kv.map(encodeURIComponent).join("="))
+        .join("&");
+  }
+  let resp = await fetch(BASE_URL + path, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  return await resp.json();
+};
+
 let get = async (path, params = null) => {
   if (params) {
     path +=
@@ -57,6 +72,6 @@ let get = async (path, params = null) => {
   return { fresh, data };
 };
 
-const API = { post, get, put, setKey, getKey };
+const API = { post, get, put, del, setKey, getKey };
 
 export default API;
