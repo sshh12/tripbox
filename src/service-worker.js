@@ -48,6 +48,16 @@ registerRoute(
   })
 );
 
+registerRoute(
+  ({ url }) =>
+    url.origin === "https://purecatamphetamine.github.io" &&
+    url.pathname.endsWith(".svg"),
+  new StaleWhileRevalidate({
+    cacheName: "images",
+    plugins: [new ExpirationPlugin({ maxEntries: 50 })],
+  })
+);
+
 // registerRoute(
 //   ({ url }) =>
 //     url.origin === "https://b.tile.openstreetmap.org" &&

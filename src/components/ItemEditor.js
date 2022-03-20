@@ -7,6 +7,7 @@ import { MultiSelect } from "react-selectize";
 import { tagToLabel } from "../util";
 import { useNavigate } from "react-router-dom";
 import FullScreenLink from "./FullScreenLink";
+import PhoneInput from "react-phone-number-input";
 
 let deleteItemProp = (item, setItem, propName) => {
   const newProps = Object.assign({}, item.props);
@@ -36,6 +37,29 @@ let createTextProp = (propKey, name, placeholder) => {
           placeholder={placeholder}
           value={item.props[propKey]}
           onChange={(e) => setItemProp(item, setItem, propKey, e.target.value)}
+        />
+      </Box>
+    ),
+    render: ({ item, name, key }) => (
+      <Text key={key}>
+        <b>{name}</b>: {item.props[key]}
+      </Text>
+    ),
+    defaultValue: "",
+  };
+};
+
+let createPhoneProp = (propKey, name) => {
+  return {
+    name: name,
+    addable: true,
+    renderEditor: ({ item, setItem }) => (
+      <Box>
+        <PhoneInput
+          international
+          defaultCountry="US"
+          value={item.props[propKey]}
+          onChange={(v) => setItemProp(item, setItem, propKey, v)}
         />
       </Box>
     ),
@@ -88,6 +112,8 @@ export const PROPS = {
   confirmation: createTextProp("confirmation", "Confirmation #", "ABC123"),
   note: createTextProp("note", "Note", "Note..."),
   fullname: createTextProp("fullname", "Full Name", "John Smith"),
+  emergencyphone: createPhoneProp("emergencyphone", "Emergency Phone"),
+  contactphone: createPhoneProp("contactphone", "Contact Phone"),
 };
 
 const ItemEditor = ({ trip, item }) => {
