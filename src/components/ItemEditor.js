@@ -159,7 +159,7 @@ export const PROPS = {
   contactphone: createPhoneProp("contactphone", "Contact Phone"),
 };
 
-const ItemEditor = ({ trip, item }) => {
+const ItemEditor = ({ trip, item, newItem }) => {
   const [loading, setLoading] = useState(false);
   const { api, refresh } = useAppEnv();
   const [editItem, setEditItem] = useState(item);
@@ -167,14 +167,15 @@ const ItemEditor = ({ trip, item }) => {
     setEditItem(item);
   }, [item]);
   const propNames = Object.keys(PROPS);
-  const allTags = trip.items.reduce((acc, cur) => {
-    for (let tag of cur.tags) {
-      if (!acc.includes(tag)) {
-        acc.push(tag);
+  const allTags =
+    trip.items.reduce((acc, cur) => {
+      for (let tag of cur.tags) {
+        if (!acc.includes(tag)) {
+          acc.push(tag);
+        }
+        return acc;
       }
-      return acc;
-    }
-  }, []);
+    }, []) || [];
   const nav = useNavigate();
   return (
     <Box p={2}>
@@ -270,7 +271,21 @@ const ItemEditor = ({ trip, item }) => {
         </SimpleSelect>
       </Box>
       <Box mt={4}>
-        {!loading && (
+        {!loading && newItem && (
+          <Button
+            sx={{ cursor: "pointer" }}
+            onClick={async () => {
+              setLoading(true);
+              await api.post("/api/items?trip_id=" + trip.trip_id, editItem);
+              refresh();
+              nav("/trips/" + trip.trip_id);
+            }}
+            bg="#07c"
+          >
+            Create
+          </Button>
+        )}
+        {!loading && !newItem && (
           <Button
             sx={{ cursor: "pointer" }}
             onClick={async () => {
@@ -284,7 +299,7 @@ const ItemEditor = ({ trip, item }) => {
             Save Changes
           </Button>
         )}
-        {!loading && (
+        {!loading && !newItem && (
           <Button
             ml={2}
             sx={{ cursor: "pointer" }}

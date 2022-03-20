@@ -6,7 +6,9 @@ const ItemEdit = () => {
   return (
     <TripModel
       renderTitle={({ item }) => `Edit ${item.title}`}
-      contents={({ trip, item }) => <ItemEditor trip={trip} item={item} />}
+      contents={({ trip, item }) => (
+        <ItemEditor newItem={false} trip={trip} item={item} />
+      )}
     />
   );
 };

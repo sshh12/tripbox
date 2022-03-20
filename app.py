@@ -171,6 +171,14 @@ def put_item():
     return jsonify(item.to_json())
 
 
+@app.route("/api/items", methods=["POST"])
+def post_item():
+    trip_id = request.args.get("trip_id")
+    trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    item = create_item(trip, title=request.json["title"], tags=request.json["tags"], props=request.json["props"])
+    return jsonify(item.to_json())
+
+
 @app.route("/api/items", methods=["DELETE"])
 def delete_item():
     item_id = request.args.get("item_id")

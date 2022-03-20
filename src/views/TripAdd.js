@@ -1,8 +1,9 @@
 import React from "react";
-import { Box } from "rebass";
+import { Box, Card, Text } from "rebass";
 import { Label } from "@rebass/forms";
 import CopyInput from "../components/CopyInput";
 import TripModel from "../components/TripModal";
+import ItemEditor from "../components/ItemEditor";
 
 const TripAdd = () => {
   return (
@@ -10,11 +11,31 @@ const TripAdd = () => {
       renderTitle={({ trip }) => `Add to ${trip.name}`}
       contents={({ trip }) => (
         <Box p={2}>
-          <Box my={3}>
-            <Label htmlFor="email">Forward trip related email to</Label>
-            <CopyInput name="email" value={trip.inbox_email} />
+          <Box>
+            <Card
+              mt={2}
+              sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }}
+              p={2}
+            >
+              <Text fontWeight={700}>Add With Email</Text>
+              <CopyInput name="email" value={trip.inbox_email} />
+            </Card>
           </Box>
           <hr />
+          <Box>
+            <Card
+              mt={2}
+              sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }}
+              p={2}
+            >
+              <Text fontWeight={700}>Add Manually</Text>
+              <ItemEditor
+                newItem={true}
+                trip={trip}
+                item={{ title: "New Item", item_id: null, props: {}, tags: [] }}
+              />
+            </Card>
+          </Box>
         </Box>
       )}
     />
