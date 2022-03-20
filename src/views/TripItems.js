@@ -121,6 +121,7 @@ const TagCard = ({ trip, tag, items }) => {
 };
 
 const ItemCard = ({ trip, item }) => {
+  const { online } = useAppEnv();
   return (
     <Card width={1} p={1} sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }}>
       <Flex
@@ -134,12 +135,14 @@ const ItemCard = ({ trip, item }) => {
           <b>{item.title}</b>
         </Text>
         <Text textAlign="right" ml={"auto"} width={0.2}>
-          <Lk
-            to={`/trips/${trip.trip_id}/edit_item/${item.item_id}`}
-            style={{ textDecoration: "none" }}
-          >
-            <b>✏️</b>
-          </Lk>
+          {online && (
+            <Lk
+              to={`/trips/${trip.trip_id}/edit_item/${item.item_id}`}
+              style={{ textDecoration: "none" }}
+            >
+              <b>✏️</b>
+            </Lk>
+          )}
         </Text>
       </Flex>
       <Box pl={3} pb={2}>

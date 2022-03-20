@@ -3,16 +3,7 @@ import json
 import os
 import secrets
 
-from flask import (
-    Flask,
-    abort,
-    g,
-    jsonify,
-    redirect,
-    request,
-    send_from_directory,
-    session,
-)
+from flask import Flask, g, jsonify, redirect, request, send_from_directory, session
 
 from tripbox import emails
 from tripbox.models import (
@@ -30,7 +21,7 @@ from tripbox.models import (
 )
 
 BASE_URL = os.environ["BASE_URL"]
-USE_DEMO_LOGIN = bool(os.environ["USE_DEMO_LOGIN"])
+USE_DEMO_LOGIN = bool(os.environ.get("USE_DEMO_LOGIN"))
 
 app = Flask(__name__, static_folder="./build")
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -187,7 +178,18 @@ def invite():
     email = request.json.get("email")
     viewer_only = request.json.get("viewer_only")
     send_invite_email(user.email, email, trip, viewer_only)
-    return jsonify(trip.to_json_with_items())
+    return jsonify(dict(success=True))
+
+
+@app.route("/api/kick", methods=["POST"])
+def kick():
+    trip_id = request.json.get("trip_id")
+    email = request.json.get("email")
+    user_trip = (
+        UserTrip.select().join(User).where(UserTrip.trip == trip_id, User.email == email, UserTrip.owner == False).get()
+    )
+    user_trip.delete_instance()
+    return jsonify(dict(success=True))
 
 
 @app.route("/api/inbound_email", methods=["POST"])

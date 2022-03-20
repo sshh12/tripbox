@@ -8,10 +8,6 @@ export const AppEnv = ({ children }) => {
   let [online, setOnline] = useState(window.navigator.onLine);
   let [api, setAPI] = useState({ ...API, refreshKey: 0 });
   let [user, _setUser] = useState(api.getKey("user"));
-  let setUser = (user) => {
-    api.setKey("user", user);
-    _setUser(user);
-  };
   // This will force any components that rely on an API call
   // to retrigger and refresh content.
   let refreshAPI = () => {
@@ -22,7 +18,8 @@ export const AppEnv = ({ children }) => {
     API.get("/api/context").then(({ data: ctxData }) => {
       setHasCtx(true);
       if (ctxData.user) {
-        setUser(ctxData.user);
+        API.setKey("user", ctxData.user);
+        _setUser(ctxData.user);
       }
     });
     window.addEventListener("online", () => setOnline(true));

@@ -4,7 +4,7 @@ import { Link as Lk } from "react-router-dom";
 import { useAppEnv } from "../env";
 
 const TripMembers = ({ trip }) => {
-  const { online } = useAppEnv();
+  const { online, api, refresh } = useAppEnv();
   return (
     <Box p={3}>
       {online && (
@@ -53,9 +53,23 @@ const TripMembers = ({ trip }) => {
                 <Text>{user.email}</Text>
               </Box>
               <Box ml="auto" mr={2}>
-                <Text>
-                  <b>X</b>
-                </Text>
+                {online && !user.owner && (
+                  <Text
+                    color="red"
+                    sx={{ cursor: "pointer" }}
+                    onClick={async () => {
+                      if (window.confirm(`Remove ${user.username}?`)) {
+                        await api.post("/api/kick", {
+                          trip_id: trip.trip_id,
+                          email: user.email,
+                        });
+                        refresh();
+                      }
+                    }}
+                  >
+                    <b>X</b>
+                  </Text>
+                )}
               </Box>
             </Flex>
           </Card>
