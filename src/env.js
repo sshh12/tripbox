@@ -3,20 +3,13 @@ import API from "./api";
 
 export const AppContext = createContext();
 
-let setKey = (key, value) => {
-  localStorage.setItem("tripbox:" + key, JSON.stringify(value));
-};
-
-let getKey = (key) => {
-  return JSON.parse(localStorage.getItem("tripbox:" + key));
-};
-
 export const AppEnv = ({ children }) => {
   let [hasCtx, setHasCtx] = useState(false);
-  let [user, _setUser] = useState(getKey("user"));
+  let [online, setOnline] = useState(window.navigator.onLine);
   let [api, setAPI] = useState({ ...API, refreshKey: 0 });
+  let [user, _setUser] = useState(api.getKey("user"));
   let setUser = (user) => {
-    setKey("user", user);
+    api.setKey("user", user);
     _setUser(user);
   };
   // This will force any components that rely on an API call
@@ -26,12 +19,14 @@ export const AppEnv = ({ children }) => {
     setAPI({ ...API, refreshKey: api.refreshKey++ });
   };
   useEffect(() => {
-    API.get("/api/context").then(({ user }) => {
+    API.get("/api/context").then(({ data: ctxData }) => {
       setHasCtx(true);
-      if (user) {
-        setUser(user);
+      if (ctxData.user) {
+        setUser(ctxData.user);
       }
     });
+    window.addEventListener("online", () => setOnline(true));
+    window.addEventListener("offline", () => setOnline(false));
   }, []);
   return (
     <AppContext.Provider
@@ -40,8 +35,7 @@ export const AppEnv = ({ children }) => {
         api: api,
         user: user,
         refresh: refreshAPI,
-        setKey: setKey,
-        getKey: getKey,
+        online: online,
       }}
     >
       {children}

@@ -66,12 +66,15 @@ const TripItems = ({ trip }) => {
 };
 
 const TagCard = ({ trip, tag, items }) => {
-  const { getKey, setKey } = useAppEnv();
+  const { api } = useAppEnv();
   const expandKey = `${trip.trip_id}:${tag}:expand`;
-  const [expanded, _setExpanded] = useState(getKey(expandKey) || 0);
+  const defaultExpand = api.getKey(expandKey);
+  const [expanded, _setExpanded] = useState(
+    defaultExpand === null ? 1 : defaultExpand
+  );
   const setExpanded = (val) => {
     _setExpanded(val);
-    setKey(expandKey, val);
+    api.setKey(expandKey, val);
   };
   return (
     <Card sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }} p={0} mb={3}>

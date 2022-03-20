@@ -111,9 +111,9 @@ def send_invite_email(from_email, email, trip, viewer_only):
 def login():
     if USE_DEMO_LOGIN:
         auth_user(session, "example@example.com")
-        return
-    email = request.json["email"]
-    send_login_email(email)
+    else:
+        email = request.json["email"]
+        send_login_email(email)
     return jsonify(dict(success=True))
 
 

@@ -4,7 +4,7 @@ import { Label, Input } from "@rebass/forms";
 import { useAppEnv } from "../env";
 
 const Login = () => {
-  const { api } = useAppEnv();
+  const { api, online } = useAppEnv();
   const [email, setEmail] = useState("");
   const [polling, setPolling] = useState(false);
   return (
@@ -34,21 +34,28 @@ const Login = () => {
             </Flex>
             <Flex mx={-2} flexWrap="wrap">
               <Box px={2} ml="auto">
-                <Button
-                  bg="#07c"
-                  onClick={async () => {
-                    await api.post("/api/login", { email: email });
-                    setPolling(true);
-                    setInterval(async () => {
-                      const pollResp = await api.get("/api/auth_poll");
-                      if (pollResp.success) {
-                        window.location.href = "/";
-                      }
-                    }, 1000);
-                  }}
-                >
-                  Login (or sign up)
-                </Button>
+                {online && (
+                  <Button
+                    bg="#07c"
+                    onClick={async () => {
+                      await api.post("/api/login", { email: email });
+                      setPolling(true);
+                      setInterval(async () => {
+                        const { data: pollResp } = await api.get(
+                          "/api/auth_poll"
+                        );
+                        if (pollResp.success) {
+                          window.location.href = "/";
+                        }
+                      }, 1000);
+                    }}
+                  >
+                    Login (or sign up)
+                  </Button>
+                )}
+                {!online && (
+                  <Button bg="grey">You must be online to login.</Button>
+                )}
               </Box>
             </Flex>
           </Box>

@@ -9,7 +9,7 @@ import TripTimeline from "./TripTimeline";
 
 const TripView = () => {
   const { trip_id } = useParams();
-  const { api } = useAppEnv();
+  const { api, online } = useAppEnv();
   const [trip, setTrip] = useState(null);
   const TABS = {
     Items: TripItems,
@@ -19,7 +19,9 @@ const TripView = () => {
   };
   const [curTab, setCurTab] = useState(Object.keys(TABS)[0]);
   useEffect(() => {
-    api.get("/api/trips", { trip_id: trip_id }).then((trip) => setTrip(trip));
+    api
+      .get("/api/trips", { trip_id: trip_id })
+      .then(({ data: trip }) => setTrip(trip));
   }, [api, trip_id]);
   const Page = TABS[curTab];
   return (
@@ -30,6 +32,7 @@ const TripView = () => {
             TripBox
           </Lk>{" "}
           / {trip?.name}
+          {!online && <Text fontSize={"0.8em"}>(offline)</Text>}
         </Text>
         <Box mx="auto" />
         <Lk to={"/edit_trip/" + trip_id} style={{ color: "#fff" }}>

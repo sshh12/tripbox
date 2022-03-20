@@ -8,7 +8,9 @@ const TripModal = ({ contents, renderTitle }) => {
   const { api } = useAppEnv();
   const [trip, setTrip] = useState(null);
   useEffect(() => {
-    api.get("/api/trips", { trip_id: trip_id }).then((trip) => setTrip(trip));
+    api
+      .get("/api/trips", { trip_id: trip_id })
+      .then(({ data: trip }) => setTrip(trip));
   }, [api, trip_id]);
   let item = null;
   if (item_id && trip) {
