@@ -18,8 +18,11 @@ const TripMap = () => {
     <Box>
       <Map
         height={size[0] - 75}
-        defaultCenter={[50.879, 4.6997]}
-        defaultZoom={11}
+        defaultCenter={[0, 0]}
+        defaultZoom={2}
+        onClick={(evt, latLng, pixel) => {
+          console.log(evt, latLng, pixel);
+        }}
       >
         <Marker width={50} anchor={[50.879, 4.6997]} />
       </Map>

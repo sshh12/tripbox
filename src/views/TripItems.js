@@ -9,7 +9,8 @@ import { PROPS } from "../components/ItemEditor";
 const TripItems = ({ trip }) => {
   const itemsByTag = {};
   for (let item of trip.items) {
-    for (let tag of item.tags) {
+    const itemTags = item.tags.length > 0 ? item.tags : ["Untagged"];
+    for (let tag of itemTags) {
       if (!(tag in itemsByTag)) {
         itemsByTag[tag] = [];
       }

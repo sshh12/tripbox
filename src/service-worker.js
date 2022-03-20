@@ -40,21 +40,14 @@ registerRoute(
 
 registerRoute(
   ({ url }) =>
-    url.origin === self.location.origin &&
-    (url.pathname.endsWith(".png") || url.pathname.endsWith(".jpg")),
+    url.origin !== "https://b.tile.openstreetmap.org" &&
+    (url.pathname.endsWith(".png") ||
+      url.pathname.endsWith(".jpg") ||
+      url.pathname.endsWith(".gif") ||
+      url.pathname.endsWith(".svg")),
   new StaleWhileRevalidate({
     cacheName: "images",
-    plugins: [new ExpirationPlugin({ maxEntries: 50 })],
-  })
-);
-
-registerRoute(
-  ({ url }) =>
-    url.origin === "https://purecatamphetamine.github.io" &&
-    url.pathname.endsWith(".svg"),
-  new StaleWhileRevalidate({
-    cacheName: "images",
-    plugins: [new ExpirationPlugin({ maxEntries: 50 })],
+    plugins: [new ExpirationPlugin({ maxEntries: 1000 })],
   })
 );
 

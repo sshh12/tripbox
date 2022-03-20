@@ -72,6 +72,42 @@ let createPhoneProp = (propKey, name) => {
   };
 };
 
+let createHTMLProp = (propKey, name, placeholder, openText) => {
+  return {
+    name: name,
+    addable: true,
+    renderEditor: ({ item, setItem }) => (
+      <Box>
+        <Input
+          placeholder={placeholder}
+          value={item.props[propKey]}
+          onChange={(e) => setItemProp(item, setItem, propKey, e.target.value)}
+        />
+      </Box>
+    ),
+    render: ({ item, name, key }) => {
+      let src = item.props[key];
+      src = src.replace("<iframe ", '<iframe style="width: 100%" ');
+      return (
+        <Text key={key}>
+          <b>{name}</b>:{" "}
+          <FullScreenLink
+            text={openText}
+            viewer={() => (
+              <iframe
+                style={{ width: "100%", height: "100%" }}
+                title={item.title}
+                srcdoc={src}
+              />
+            )}
+          />
+        </Text>
+      );
+    },
+    defaultValue: {},
+  };
+};
+
 export const PROPS = {
   email: {
     name: "Email",
@@ -108,6 +144,13 @@ export const PROPS = {
     ),
     defaultValue: {},
   },
+  embeddedHTML: createHTMLProp(
+    "embeddedHTML",
+    "HTML",
+    "<iframe ...>",
+    "Open HTML"
+  ),
+  embeddedMap: createHTMLProp("embeddedMap", "Map", "<iframe ...>", "Open Map"),
   desc: createTextProp("desc", "Description", "Description..."),
   confirmation: createTextProp("confirmation", "Confirmation #", "ABC123"),
   note: createTextProp("note", "Note", "Note..."),
