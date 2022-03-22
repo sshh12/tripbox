@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Box, Card, Text, Button } from "rebass";
+import { Box, Button } from "rebass";
 import { Label, Input } from "@rebass/forms";
-import CopyInput from "../components/CopyInput";
 import TripModel from "../components/TripModal";
-import ItemEditor from "../components/ItemEditor";
 import { useNavigate } from "react-router-dom";
 import { useAppEnv } from "../env";
 

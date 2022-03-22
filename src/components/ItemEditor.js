@@ -243,8 +243,8 @@ const ItemEditor = ({ trip, item, newItem }) => {
         if (!acc.includes(tag)) {
           acc.push(tag);
         }
-        return acc;
       }
+      return acc;
     }, []) || [];
   const nav = useNavigate();
   return (

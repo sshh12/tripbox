@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Card, Text } from "rebass";
-import { Label } from "@rebass/forms";
 import CopyInput from "../components/CopyInput";
 import TripModel from "../components/TripModal";
 import ItemEditor from "../components/ItemEditor";

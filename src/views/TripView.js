@@ -4,7 +4,6 @@ import { useAppEnv } from "../env";
 import { useParams, Link as Lk } from "react-router-dom";
 import TripMembers from "./TripMembers";
 import TripItems from "./TripItems";
-import TripMap from "./TripMap";
 
 const TripView = () => {
   const { trip_id } = useParams();

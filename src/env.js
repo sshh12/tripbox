@@ -29,7 +29,7 @@ export const AppEnv = ({ children }) => {
     return (
       trip &&
       user &&
-      trip.users.find((u) => u.email == user.email && u.viewer_only === false)
+      trip.users.find((u) => u.email === user.email && u.viewer_only === false)
     );
   };
   return (
