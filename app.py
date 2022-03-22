@@ -88,7 +88,7 @@ def send_login_email(email):
     emails.send_email(
         email,
         "Login to TripBox",
-        'Click this link to login: <a href="{}">Login to TripBox</a>'.format(
+        'Use this link to login: <a href="{}">Login to TripBox</a>'.format(
             BASE_URL + "/api/auth_with_secret?secret=" + secret
         ),
     )
@@ -103,7 +103,7 @@ def send_invite_email(from_email, email, trip, viewer_only):
     emails.send_email(
         email,
         "Login to TripBox to join " + trip.name,
-        'You were invited by {} to join TripBox. Click this link to login: <a href="{}">Login to TripBox</a>'.format(
+        'You were invited by {} to join TripBox. Use this link to login: <a href="{}">Login to TripBox</a>'.format(
             from_email, BASE_URL + "/api/auth_with_secret?secret=" + secret
         ),
     )
@@ -111,7 +111,7 @@ def send_invite_email(from_email, email, trip, viewer_only):
 
 @app.route("/api/login", methods=["POST"])
 def login():
-    if USE_DEMO_LOGIN:
+    if USE_DEMO_LOGIN and False:
         auth_user(session, "example@example.com")
     else:
         email = request.json["email"]
@@ -127,7 +127,8 @@ def auth_with_secret():
         auth_token.authed = True
         auth_token.save()
     user = auth_user(session, auth_token.email)
-    add_user_to_trip(user, auth_token.join_trip_id, viewer_only=auth_token.join_as_viewer)
+    if auth_token.join_trip_id:
+        add_user_to_trip(user, auth_token.join_trip_id, viewer_only=auth_token.join_as_viewer)
     return redirect(BASE_URL)
 
 
