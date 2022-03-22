@@ -11,6 +11,7 @@ import TripList from "./views/TripList";
 import TripView from "./views/TripView";
 import TripAdd from "./views/TripAdd";
 import ItemEdit from "./views/ItemEdit";
+import TripEdit from "./views/TripEdit";
 import TripInvite from "./views/TripInvite";
 
 const App = () => {
@@ -37,6 +38,7 @@ const Router = () => {
         <Route exact path="/" element={<TripList />}></Route>
         <Route path="/trips/:trip_id" element={<TripView />}></Route>
         <Route path="/add_to_trip/:trip_id" element={<TripAdd />}></Route>
+        <Route path="/edit_trip/:trip_id" element={<TripEdit />}></Route>
         <Route path="/invite_to_trip/:trip_id" element={<TripInvite />}></Route>
         <Route
           path="/invite_obs_to_trip/:trip_id"

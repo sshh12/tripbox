@@ -13,7 +13,6 @@ const TripView = () => {
   const TABS = {
     Items: TripItems,
     Members: TripMembers,
-    Map: TripMap,
   };
   const [curTab, setCurTab] = useState(Object.keys(TABS)[0]);
   useEffect(() => {

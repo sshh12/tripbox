@@ -17,6 +17,7 @@ from tripbox.models import (
     create_item,
     create_trip,
     database,
+    delete_trip,
     get_or_404,
     get_or_create_user,
 )
@@ -160,6 +161,23 @@ def get_trip():
         return jsonify(trips)
 
 
+@app.route("/api/trips", methods=["PUT"])
+def put_trip():
+    trip_id = request.args.get("trip_id")
+    trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    trip.name = request.json["name"]
+    trip.save()
+    return jsonify(trip.to_json())
+
+
+@app.route("/api/trips", methods=["DELETE"])
+def del_trip():
+    trip_id = request.args.get("trip_id")
+    trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    delete_trip(trip)
+    return jsonify(dict(success=True))
+
+
 @app.route("/api/items", methods=["PUT"])
 def put_item():
     item_id = request.args.get("item_id")
@@ -180,7 +198,7 @@ def post_item():
 
 
 @app.route("/api/items", methods=["DELETE"])
-def delete_item():
+def del_item():
     item_id = request.args.get("item_id")
     item = get_or_404(Item, Item.item_id == item_id)
     with database.atomic():

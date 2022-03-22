@@ -122,6 +122,15 @@ def create_trip(user, name):
     return trip
 
 
+def delete_trip(trip):
+    with database.atomic():
+        trip_items = Item.select().join(TripItem).where(TripItem.trip == trip)
+        TripItem.delete().where(TripItem.trip == trip).execute()
+        Item.delete().where(Item.item_id.in_(trip_items)).execute()
+        UserTrip.delete().where(UserTrip.trip == trip).execute()
+        trip.delete_instance()
+
+
 def add_user_to_trip(user, trip, **opts):
     return UserTrip.create(user=user, trip=trip, **opts)
 
