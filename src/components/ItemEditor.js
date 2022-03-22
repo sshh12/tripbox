@@ -8,6 +8,7 @@ import { tagToLabel } from "../util";
 import { useNavigate } from "react-router-dom";
 import FullScreenLink from "./FullScreenLink";
 import PhoneInput from "react-phone-number-input";
+import DatePicker from "react-datepicker";
 
 let deleteItemProp = (item, setItem, propName) => {
   const newProps = Object.assign({}, item.props);
@@ -157,6 +158,75 @@ export const PROPS = {
   fullname: createTextProp("fullname", "Full Name", "John Smith"),
   emergencyphone: createPhoneProp("emergencyphone", "Emergency Phone"),
   contactphone: createPhoneProp("contactphone", "Contact Phone"),
+  date: {
+    name: "Date",
+    addable: true,
+    renderEditor: ({ item, setItem }) => (
+      <Box>
+        <DatePicker
+          withPortal
+          selected={new Date(item.props.date)}
+          onChange={(date) => setItemProp(item, setItem, "date", "" + date)}
+        />
+      </Box>
+    ),
+    render: ({ item, name, key }) => (
+      <Text key={key}>
+        <b>{name}</b>: {item.props[key].split(" ").slice(0, 4).join(" ")}
+      </Text>
+    ),
+    defaultValue: "" + new Date(),
+  },
+  datetime: {
+    name: "Date & Time",
+    addable: true,
+    renderEditor: ({ item, setItem }) => (
+      <Box>
+        <DatePicker
+          withPortal
+          showTimeInput={true}
+          selected={new Date(item.props.datetime)}
+          onChange={(date) => setItemProp(item, setItem, "datetime", "" + date)}
+        />
+      </Box>
+    ),
+    render: ({ item, name, key }) => (
+      <Text key={key}>
+        <b>{name}</b>: {item.props[key]}
+      </Text>
+    ),
+    defaultValue: "" + new Date(),
+  },
+  dateRange: {
+    name: "Date Range",
+    addable: true,
+    renderEditor: ({ item, setItem }) => (
+      <Box>
+        <DatePicker
+          selectsRange
+          withPortal
+          selected={new Date(item.props.dateRange.split(",")[0])}
+          startDate={new Date(item.props.dateRange.split(",")[0])}
+          endDate={new Date(item.props.dateRange.split(",")[1])}
+          onChange={(dates) => {
+            const start =
+              dates[0] || new Date(item.props.dateRange.split(",")[0]);
+            const end =
+              dates[1] || new Date(item.props.dateRange.split(",")[1]);
+            setItemProp(item, setItem, "dateRange", `${start},${end}`);
+          }}
+        />
+      </Box>
+    ),
+    render: ({ item, name, key }) => (
+      <Text key={key}>
+        <b>{name}</b>:{" "}
+        {item.props[key].split(",")[0].split(" ").slice(0, 4).join(" ")} to{" "}
+        {item.props[key].split(",")[1].split(" ").slice(0, 4).join(" ")}
+      </Text>
+    ),
+    defaultValue: `${new Date()},${new Date(Date() + 1000 * 60 * 60 * 24)}`,
+  },
 };
 
 const ItemEditor = ({ trip, item, newItem }) => {
@@ -227,7 +297,7 @@ const ItemEditor = ({ trip, item, newItem }) => {
                 <Flex alignItems="center" name={propName}>
                   <FieldEditor
                     key={propName}
-                    item={item}
+                    item={editItem}
                     setItem={(newItem) => setEditItem(newItem)}
                   />
                   <Text

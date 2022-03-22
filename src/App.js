@@ -1,5 +1,6 @@
 import "react-selectize/themes/index.css";
 import "react-phone-number-input/style.css";
+import "react-datepicker/dist/react-datepicker.css";
 import { ThemeProvider } from "@emotion/react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import theme from "./theme";
