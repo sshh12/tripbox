@@ -7,6 +7,7 @@ import { useAppEnv } from "../env";
 import { PROPS } from "../components/ItemEditor";
 
 const TripItems = ({ trip }) => {
+  const { online, canEditTrip } = useAppEnv();
   const itemsByTag = {};
   for (let item of trip.items) {
     const itemTags = item.tags.length > 0 ? item.tags : ["Untagged"];
@@ -19,44 +20,47 @@ const TripItems = ({ trip }) => {
   }
   const tagsSorted = Object.keys(itemsByTag);
   tagsSorted.sort((a, b) => a.localeCompare(b));
+  const canEdit = canEditTrip(trip) && online;
   return (
     <Box p={3}>
-      <Box>
-        <Card
-          sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }}
-          w={1 / 2}
-          p={2}
-          mb={3}
-        >
-          <Flex alignItems="center">
-            <Box>
-              <Lk
-                to={"/add_to_trip/" + trip.trip_id}
-                style={{ textDecoration: "none", color: "#000" }}
-              >
+      {canEdit && (
+        <Box>
+          <Card
+            sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }}
+            w={1 / 2}
+            p={2}
+            mb={3}
+          >
+            <Flex alignItems="center">
+              <Box>
+                <Lk
+                  to={"/add_to_trip/" + trip.trip_id}
+                  style={{ textDecoration: "none", color: "#000" }}
+                >
+                  <Text>
+                    <b>Add Item</b>
+                  </Text>
+                </Lk>
                 <Text>
-                  <b>Add Item</b>
+                  Add a confirmation, receipt, etc to this trip. You can also
+                  forward emails directly to:{" "}
+                  <CopyInput mt={1} name={"email"} value={trip.inbox_email} />
                 </Text>
-              </Lk>
-              <Text>
-                Add a confirmation, receipt, etc to this trip. You can also
-                forward emails directly to:{" "}
-                <CopyInput mt={1} name={"email"} value={trip.inbox_email} />
-              </Text>
-            </Box>
-            <Box ml="auto" mr={2} pl={4}>
-              <Lk
-                to={"/add_to_trip/" + trip.trip_id}
-                style={{ textDecoration: "none", color: "#000" }}
-              >
-                <Text fontSize={"2em"}>
-                  <b>+</b>
-                </Text>
-              </Lk>
-            </Box>
-          </Flex>
-        </Card>
-      </Box>
+              </Box>
+              <Box ml="auto" mr={2} pl={4}>
+                <Lk
+                  to={"/add_to_trip/" + trip.trip_id}
+                  style={{ textDecoration: "none", color: "#000" }}
+                >
+                  <Text fontSize={"2em"}>
+                    <b>+</b>
+                  </Text>
+                </Lk>
+              </Box>
+            </Flex>
+          </Card>
+        </Box>
+      )}
       {tagsSorted.map((tag) => (
         <Box key={tag}>
           <TagCard trip={trip} tag={tag} items={itemsByTag[tag]} />

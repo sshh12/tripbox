@@ -25,6 +25,13 @@ export const AppEnv = ({ children }) => {
     window.addEventListener("online", () => setOnline(true));
     window.addEventListener("offline", () => setOnline(false));
   }, []);
+  let canEditTrip = (trip) => {
+    return (
+      trip &&
+      user &&
+      trip.users.find((u) => u.email == user.email && u.viewer_only === false)
+    );
+  };
   return (
     <AppContext.Provider
       value={{
@@ -33,6 +40,7 @@ export const AppEnv = ({ children }) => {
         user: user,
         refresh: refreshAPI,
         online: online,
+        canEditTrip: canEditTrip,
       }}
     >
       {children}

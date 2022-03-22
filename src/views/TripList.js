@@ -66,7 +66,7 @@ const TripList = () => {
                     px: 4,
                     py: 6,
                     backgroundImage:
-                      "url(https://source.unsplash.com/random/1024x768?city)",
+                      "url(https://source.unsplash.com/random/1024x768?night)",
                     backgroundSize: "cover",
                     borderRadius: 8,
                     color: "white",

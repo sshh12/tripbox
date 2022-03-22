@@ -37,6 +37,16 @@ class User(BaseModel):
     username = CharField()
     created_at = DateTimeField(default=datetime.datetime.now)
 
+    def can_view_trip(self, trip):
+        return UserTrip.select().where(UserTrip.user == self, UserTrip.trip == trip).exists()
+
+    def can_edit_trip(self, trip):
+        return (
+            UserTrip.select()
+            .where(UserTrip.user == self, UserTrip.trip == trip, UserTrip.viewer_only == False)
+            .exists()
+        )
+
     def to_json(self):
         return dict(email=self.email, username=self.username)
 
@@ -80,6 +90,9 @@ class Item(BaseModel):
     created_at = DateTimeField(default=datetime.datetime.now)
     props = JSONField()
     tags = ArrayField(CharField)
+
+    def get_trip(self):
+        return TripItem.select().where(TripItem.item == self).get().trip
 
     def to_json(self):
         return dict(item_id=self.item_id, title=self.title, tags=self.tags, props=self.props)

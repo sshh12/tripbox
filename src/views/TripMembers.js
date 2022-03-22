@@ -4,10 +4,11 @@ import { Link as Lk } from "react-router-dom";
 import { useAppEnv } from "../env";
 
 const TripMembers = ({ trip }) => {
-  const { online, api, refresh } = useAppEnv();
+  const { online, api, refresh, canEditTrip } = useAppEnv();
+  const canEdit = canEditTrip(trip) && online;
   return (
     <Box p={3}>
-      {online && (
+      {canEdit && (
         <Box>
           <MemberActionCard
             link={"/invite_to_trip/" + trip?.trip_id}
@@ -35,7 +36,7 @@ const TripMembers = ({ trip }) => {
           <Card sx={{ boxShadow: "rgb(0 0 0 / 13%) 0px 0px 4px" }} p={2} mb={3}>
             <Flex alignItems="center">
               <Image
-                src={"https://source.unsplash.com/random/128x128"}
+                src={"https://source.unsplash.com/random/128x128?bird"}
                 sx={{
                   width: 48,
                   height: 48,

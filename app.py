@@ -3,7 +3,16 @@ import json
 import os
 import secrets
 
-from flask import Flask, g, jsonify, redirect, request, send_from_directory, session
+from flask import (
+    Flask,
+    abort,
+    g,
+    jsonify,
+    redirect,
+    request,
+    send_from_directory,
+    session,
+)
 
 from tripbox import emails
 from tripbox.models import (
@@ -151,12 +160,14 @@ def post_trip():
 
 @app.route("/api/trips")
 def get_trip():
+    user = get_current_user()
     trip_id = request.args.get("trip_id")
     if trip_id is not None:
         trip = get_or_404(Trip, Trip.trip_id == trip_id)
+        if not user.can_view_trip(trip):
+            abort(401)
         return jsonify(trip.to_json_with_items())
     else:
-        user = get_current_user()
         trips = [trip.to_json() for trip in Trip.select().join(UserTrip).where(UserTrip.user == user)]
         return jsonify(trips)
 
@@ -165,6 +176,8 @@ def get_trip():
 def put_trip():
     trip_id = request.args.get("trip_id")
     trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    if not get_current_user().can_edit_trip(trip):
+        abort(401)
     trip.name = request.json["name"]
     trip.save()
     return jsonify(trip.to_json())
@@ -174,6 +187,8 @@ def put_trip():
 def del_trip():
     trip_id = request.args.get("trip_id")
     trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    if not get_current_user().can_edit_trip(trip):
+        abort(401)
     delete_trip(trip)
     return jsonify(dict(success=True))
 
@@ -182,6 +197,8 @@ def del_trip():
 def put_item():
     item_id = request.args.get("item_id")
     item = get_or_404(Item, Item.item_id == item_id)
+    if not get_current_user().can_edit_trip(item.get_trip()):
+        abort(401)
     item.title = request.json["title"]
     item.props = request.json["props"]
     item.tags = request.json["tags"]
@@ -193,6 +210,8 @@ def put_item():
 def post_item():
     trip_id = request.args.get("trip_id")
     trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    if not get_current_user().can_edit_trip(trip):
+        abort(401)
     item = create_item(trip, title=request.json["title"], tags=request.json["tags"], props=request.json["props"])
     return jsonify(item.to_json())
 
@@ -201,6 +220,8 @@ def post_item():
 def del_item():
     item_id = request.args.get("item_id")
     item = get_or_404(Item, Item.item_id == item_id)
+    if not get_current_user().can_edit_trip(item.get_trip()):
+        abort(401)
     with database.atomic():
         TripItem.delete().where(TripItem.item == item).execute()
         item.delete_instance()
@@ -212,6 +233,8 @@ def invite():
     user = get_current_user()
     trip_id = request.json.get("trip_id")
     trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    if not user.can_edit_trip(trip):
+        abort(401)
     email = request.json.get("email")
     viewer_only = request.json.get("viewer_only")
     send_invite_email(user.email, email, trip, viewer_only)
@@ -221,6 +244,9 @@ def invite():
 @app.route("/api/kick", methods=["POST"])
 def kick():
     trip_id = request.json.get("trip_id")
+    trip = get_or_404(Trip, Trip.trip_id == trip_id)
+    if not get_current_user().can_edit_trip(trip):
+        abort(401)
     email = request.json.get("email")
     user_trip = (
         UserTrip.select().join(User).where(UserTrip.trip == trip_id, User.email == email, UserTrip.owner == False).get()

@@ -105,7 +105,7 @@ let createHTMLProp = (propKey, name, placeholder, openText) => {
         </Text>
       );
     },
-    defaultValue: {},
+    defaultValue: "",
   };
 };
 

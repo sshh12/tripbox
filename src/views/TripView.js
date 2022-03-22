@@ -8,7 +8,7 @@ import TripMap from "./TripMap";
 
 const TripView = () => {
   const { trip_id } = useParams();
-  const { api, online } = useAppEnv();
+  const { api, online, canEditTrip } = useAppEnv();
   const [trip, setTrip] = useState(null);
   const TABS = {
     Items: TripItems,
@@ -21,6 +21,7 @@ const TripView = () => {
       .then(({ data: trip }) => setTrip(trip));
   }, [api, trip_id]);
   const Page = TABS[curTab];
+  const canEdit = canEditTrip(trip) && online;
   return (
     <Box>
       <Flex px={2} color="white" bg="black" alignItems="center">
@@ -32,15 +33,19 @@ const TripView = () => {
           {!online && <Text fontSize={"0.8em"}>(offline)</Text>}
         </Text>
         <Box mx="auto" />
-        <Lk to={"/edit_trip/" + trip_id} style={{ color: "#fff" }}>
-          edit
-        </Lk>
-        <Lk
-          to={"/add_to_trip/" + trip_id}
-          style={{ color: "#fff", marginLeft: "10px" }}
-        >
-          add item
-        </Lk>
+        {canEdit && (
+          <Lk to={"/edit_trip/" + trip_id} style={{ color: "#fff" }}>
+            edit
+          </Lk>
+        )}
+        {canEdit && (
+          <Lk
+            to={"/add_to_trip/" + trip_id}
+            style={{ color: "#fff", marginLeft: "10px" }}
+          >
+            add item
+          </Lk>
+        )}
       </Flex>
       <Flex
         p={2}
