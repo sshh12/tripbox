@@ -111,7 +111,9 @@ def delete_trip(trip, by_user):
 
 
 def add_user_to_trip(user, trip, **opts):
-    return UserTrip.create(user=user, trip=trip, **opts)
+    if UserTrip.select().where(UserTrip.user == user, UserTrip.trip == trip).exists():
+        return
+    UserTrip.create(user=user, trip=trip, **opts)
 
 
 def remove_user_from_trip(user_email, trip, by_user):
