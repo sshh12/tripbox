@@ -49,7 +49,7 @@ function TripImageList({ trips }) {
         <Lk to={`/trips/${trip.trip_id}`} key={trip.trip_id}>
           <ImageListItem>
             <img
-              src={`https://source.unsplash.com/random/1024x768?night`}
+              src={`https://source.unsplash.com/random/1024x768?` + trip.name}
               alt={trip.name}
               loading="lazy"
             />

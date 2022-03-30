@@ -81,7 +81,7 @@ def get_trip(trip_id):
 
 
 def get_trip_for_user(user):
-    return [trip for trip in Trip.select().join(UserTrip).where(UserTrip.user == user)]
+    return [trip for trip in Trip.select().join(UserTrip).where(UserTrip.user == user).order_by(Trip.trip_id.desc())]
 
 
 def create_trip(by_user, name):
