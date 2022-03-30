@@ -82,7 +82,11 @@ function TagCard({ tag, items, trip }) {
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
-        style={{ backgroundColor: tagToColor(tag), color: "#fff" }}
+        style={{
+          backgroundColor: tagToColor(tag),
+          color: "#fff",
+          minHeight: "20px",
+        }}
       >
         <Typography>
           <b>{tagToLabel(tag)}</b>
@@ -97,7 +101,10 @@ function TagCard({ tag, items, trip }) {
         >
           {items.map((item, i) => (
             <Box key={item.item_id}>
-              <ListItem alignItems="flex-start">
+              <ListItem
+                alignItems="flex-start"
+                sx={{ padding: "6px 6px 6px 10px" }}
+              >
                 <ListItemText
                   primary={item.title}
                   secondary={

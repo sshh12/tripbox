@@ -4,6 +4,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import ErrorIcon from "@mui/icons-material/Error";
 import Button from "@mui/material/Button";
+import FullScreenLink from "../components/FullScreenLink";
 
 const ITEM_PROPS = {
   confirmation: {
@@ -31,7 +32,24 @@ const ITEM_PROPS = {
     icon: EmailIcon,
     title: "Email",
     renderInList: ({ trip, item, propDef, value }) => (
-      <ListItemText primary={<Button variant="text">Open Email</Button>} />
+      <ListItemText
+        primary={
+          <FullScreenLink
+            opener={({ onClick }) => (
+              <Button onClick={onClick} variant="text">
+                Open Email
+              </Button>
+            )}
+            viewer={() => (
+              <iframe
+                style={{ width: "100%", height: "100%" }}
+                title={propDef.title}
+                srcdoc={value.html}
+              />
+            )}
+          />
+        }
+      />
     ),
   },
 };
