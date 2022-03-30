@@ -26,7 +26,7 @@ const Home = () => {
   }, [api]);
   return (
     <Box>
-      <MenuAppBar loading={trips === null} />
+      <MenuAppBar loading={trips === null} title={"TripBox"} />
       <Box sx={{ margin: "66px 10px 10px 10px" }}>
         {trips !== null && <TripImageList trips={trips} />}
       </Box>

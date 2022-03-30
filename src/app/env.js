@@ -27,6 +27,7 @@ export const AppEnv = ({ children }) => {
   }, []);
   let canEditTrip = (trip) => {
     return (
+      online &&
       trip &&
       user &&
       trip.users.find((u) => u.email === user.email && u.viewer_only === false)

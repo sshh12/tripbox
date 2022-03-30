@@ -6,6 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Box from "@mui/material/Box";
 import Login from "./views/Login";
 import Home from "./views/Home";
+import TripView from "./views/TripView";
 
 const theme = createTheme();
 
@@ -42,6 +43,7 @@ const Router = () => {
     return (
       <Routes>
         <Route exact path="/" element={<Home />}></Route>
+        <Route path="/trips/:trip_id" element={<TripView />}></Route>
         {/* <Route path="/trips/:trip_id" element={<TripView />}></Route>
         <Route path="/add_to_trip/:trip_id" element={<TripAdd />}></Route>
         <Route path="/edit_trip/:trip_id" element={<TripEdit />}></Route>
