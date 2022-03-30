@@ -69,7 +69,7 @@ function TagCard({ tag, items, trip }) {
   const [expanded, setExpanded] = useState(false);
   useEffect(() => {
     setExpanded(api.getKey(openKey));
-  }, [api]);
+  }, [api, openKey]);
   const props = Object.keys(ITEM_PROPS);
   return (
     <Accordion
