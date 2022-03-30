@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { tagToColor, tagToLabel } from "./../app/util";
+import { useAppEnv } from "./../app/env";
 
 import { Link as Lk } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -52,16 +53,29 @@ function TripItems({ trip, loading, canEdit }) {
       <Box p={1} mt={"200px"}>
         {trip &&
           Object.keys(itemsByTag).map((tag) => (
-            <TagCard tag={tag} items={itemsByTag[tag]} key={tag} />
+            <TagCard trip={trip} tag={tag} items={itemsByTag[tag]} key={tag} />
           ))}
       </Box>
     </Box>
   );
 }
 
-function TagCard({ tag, items }) {
+function TagCard({ tag, items, trip }) {
+  const { api } = useAppEnv();
+  const openKey = `${trip.trip_id}:${tag}:open`;
+  const [expanded, setExpanded] = useState(false);
+  useEffect(() => {
+    setExpanded(api.getKey(openKey));
+  }, [api]);
   return (
-    <Accordion key={tag} defaultExpanded>
+    <Accordion
+      key={tag}
+      expanded={expanded}
+      onChange={(e, expanded) => {
+        setExpanded(expanded);
+        api.setKey(openKey, expanded);
+      }}
+    >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         style={{ backgroundColor: tagToColor(tag), color: "#fff" }}
