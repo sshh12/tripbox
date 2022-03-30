@@ -1,73 +1,75 @@
 import React, { useState, useEffect } from "react";
-import { Box, Flex, Text, Link } from "rebass";
-import { useAppEnv } from "../env";
-import { useParams, Link as Lk } from "react-router-dom";
-import TripMembers from "./TripMembers";
-import TripItems from "./TripItems";
+import { useAppEnv } from "../app/env";
+import { useParams } from "react-router-dom";
+
+import TripAppBar from "../components/TripAppBar";
+import Box from "@mui/material/Box";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import PeopleIcon from "@mui/icons-material/People";
+import CategoryIcon from "@mui/icons-material/Category";
+import TripItems from "../components/TripItems";
+import TripMembers from "../components/TripMembers";
+
+const TAB_COMPONENTS = [TripItems, TripMembers];
 
 const TripView = () => {
   const { trip_id } = useParams();
-  const { api, online, canEditTrip } = useAppEnv();
+  const { api, canEditTrip } = useAppEnv();
   const [trip, setTrip] = useState(null);
-  const TABS = {
-    Items: TripItems,
-    Members: TripMembers,
-  };
-  const [curTab, setCurTab] = useState(Object.keys(TABS)[0]);
+  const [tab, setTab] = React.useState(0);
   useEffect(() => {
     api
       .get("/api/trips", { trip_id: trip_id })
       .then(({ data: trip }) => setTrip(trip));
   }, [api, trip_id]);
-  const Page = TABS[curTab];
-  const canEdit = canEditTrip(trip) && online;
+  const Page = TAB_COMPONENTS[tab];
+  const canEdit = canEditTrip(trip);
+  const loading = trip === null;
   return (
     <Box>
-      <Flex px={2} color="white" bg="black" alignItems="center">
-        <Text p={2} fontWeight="bold">
-          <Lk style={{ textDecoration: "none", color: "#fff" }} to="/">
-            TripBox
-          </Lk>{" "}
-          / {trip?.name}
-          {!online && <Text fontSize={"0.8em"}>(offline)</Text>}
-        </Text>
-        <Box mx="auto" />
-        {canEdit && (
-          <Lk to={"/edit_trip/" + trip_id} style={{ color: "#fff" }}>
-            edit
-          </Lk>
-        )}
-        {canEdit && (
-          <Lk
-            to={"/add_to_trip/" + trip_id}
-            style={{ color: "#fff", marginLeft: "10px" }}
-          >
-            add item
-          </Lk>
-        )}
-      </Flex>
-      <Flex
-        p={2}
-        color="white"
-        bg="#30c"
-        alignItems="center"
-        justifyContent="space-evenly"
-      >
-        {Object.keys(TABS).map((tab) => (
-          <Link
-            key={tab}
-            variant="nav"
-            onClick={() => setCurTab(tab)}
-            color="#fff"
-            style={{ textDecoration: "none", cursor: "pointer" }}
-          >
-            {tab === curTab ? <b>Trip {tab}</b> : tab}
-          </Link>
-        ))}
-      </Flex>
-      {trip && <Page trip={trip} />}
+      <TripAppBar
+        loading={loading}
+        trip={trip}
+        canEdit={canEdit}
+        showExtras={tab === 0}
+      />
+      <TripTabs tab={tab} setTab={setTab} />
+      <Box sx={{ marginTop: "60px" }}>
+        <Page trip={trip} loading={loading} canEdit={canEdit} />
+      </Box>
     </Box>
   );
 };
+
+function TripTabs({ tab, setTab }) {
+  const width = window.outerWidth;
+  return (
+    <Tabs
+      sx={{
+        backgroundColor: "#fff",
+        position: "fixed",
+        bottom: "0px",
+        justifyContent: "space-evenly",
+        width: width + "px",
+        zIndex: 20,
+      }}
+      value={tab}
+      onChange={(e, val) => setTab(val)}
+    >
+      <Tab
+        icon={<CategoryIcon />}
+        sx={{ textTransform: "none", width: width / 2 + "px" }}
+        label="Trip"
+      />
+      <Tab
+        fullWidth
+        icon={<PeopleIcon />}
+        sx={{ textTransform: "none", width: width / 2 + "px" }}
+        label="Members"
+      />
+    </Tabs>
+  );
+}
 
 export default TripView;

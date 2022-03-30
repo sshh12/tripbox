@@ -1,13 +1,14 @@
 import React from "react";
-import { Input } from "@rebass/forms";
+import FilledInput from "@mui/material/FilledInput";
 
-const CopyInput = ({ name, value, ...props }) => {
+const CopyInput = ({ value, ...props }) => {
   return (
-    <Input
+    <FilledInput
       {...props}
-      id={name}
-      name={name}
-      type={name}
+      fullWidth
+      hiddenLabel={true}
+      readOnly={true}
+      variant="filled"
       value={value}
       onChange={() => {}}
       onClick={(e) => {

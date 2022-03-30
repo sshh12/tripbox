@@ -1,52 +1,50 @@
 import React, { useState } from "react";
-import { Box, Flex, Text } from "rebass";
 
-const FullScreenViewer = ({ text, viewer }) => {
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import ListItemText from "@mui/material/ListItemText";
+import ListItem from "@mui/material/ListItem";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import CloseIcon from "@mui/icons-material/Close";
+import Slide from "@mui/material/Slide";
+import Box from "@mui/material/Box";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+function FullScreenLink({ opener, viewer }) {
   const [open, setOpen] = useState(false);
-  const Page = viewer;
-  if (!open) {
-    return (
-      <Text
-        color="blue"
-        sx={{ cursor: "pointer", textDecoration: "underline" }}
-        display="inline"
-        onClick={() => setOpen(true)}
-      >
-        {text}
-      </Text>
-    );
-  }
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const OpenElem = opener;
+  const PageElem = viewer;
   return (
-    <Box
-      sx={{
-        background: "#fff",
-        position: "absolute",
-        zIndex: 999,
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      <Flex
-        px={2}
-        color="white"
-        bg="black"
-        alignItems="center"
-        justifyContent="space-between"
+    <Box>
+      <OpenElem onClick={() => setOpen(true)} />
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
       >
-        <Text
-          p={2}
-          fontWeight="bold"
-          sx={{ cursor: "pointer" }}
-          onClick={() => setOpen(false)}
-        >
-          {"X"}
-        </Text>
-      </Flex>
-      <Page />
+        <AppBar sx={{ position: "relative" }}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <PageElem />
+      </Dialog>
     </Box>
   );
-};
+}
 
-export default FullScreenViewer;
+export default FullScreenLink;
