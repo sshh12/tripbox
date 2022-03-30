@@ -35,7 +35,7 @@ function TripMembers({ trip, loading, canEdit }) {
         </Fab>
       )}
       <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>
-        {trip.users.map((user) => (
+        {trip.users.map((user, i) => (
           <Box key={user.email}>
             <ListItem
               alignItems="flex-start"
@@ -71,7 +71,7 @@ function TripMembers({ trip, loading, canEdit }) {
                 }
               />
             </ListItem>
-            <Divider variant="inset" component="li" />
+            {i !== trip.users.length - 1 && <Divider component="li" />}
           </Box>
         ))}
       </List>

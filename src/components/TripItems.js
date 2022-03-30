@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { tagToColor, tagToLabel } from "./../app/util";
 import { useAppEnv } from "./../app/env";
+import ITEM_PROPS from "./../app/ItemProps";
 
 import { Link as Lk } from "react-router-dom";
 import Box from "@mui/material/Box";
@@ -15,6 +16,8 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
 
 function TripItems({ trip, loading, canEdit }) {
   const itemsByTag = {};
@@ -67,6 +70,7 @@ function TagCard({ tag, items, trip }) {
   useEffect(() => {
     setExpanded(api.getKey(openKey));
   }, [api]);
+  const props = Object.keys(ITEM_PROPS);
   return (
     <Accordion
       key={tag}
@@ -104,7 +108,34 @@ function TagCard({ tag, items, trip }) {
                         variant="body2"
                         color="text.primary"
                       ></Typography>
-                      <span>{JSON.stringify(Object.keys(item.props))}</span>
+                      <List>
+                        {props.map((prop) => {
+                          const { icon: PropIcon, renderInList: PropElem } =
+                            ITEM_PROPS[prop];
+                          return (
+                            <Box>
+                              {Object.keys(item.props).includes(prop) && (
+                                <ListItem disablePadding>
+                                  <ListItemButton>
+                                    <ListItemIcon>
+                                      <PropIcon />
+                                    </ListItemIcon>
+                                    <PropElem
+                                      trip={trip}
+                                      item={item}
+                                      propDef={ITEM_PROPS[prop]}
+                                      value={item.props[prop]}
+                                    />
+                                  </ListItemButton>
+                                </ListItem>
+                              )}
+                              {Object.keys(item.props).includes(prop) && (
+                                <Divider variant="inset" component="li" />
+                              )}
+                            </Box>
+                          );
+                        })}
+                      </List>
                     </React.Fragment>
                   }
                 />
