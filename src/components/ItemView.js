@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { tagToLabel } from "../app/util";
 import ITEM_PROPS from "./../app/ItemProps";
 import { useAppEnv } from "./../app/env";
 
@@ -21,6 +22,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
+import CustomSelect from "./CustomSelect";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -41,6 +43,15 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
     setEditItem(item);
   };
   const { api, refresh } = useAppEnv();
+  const allTags =
+    trip.items.reduce((acc, cur) => {
+      for (let tag of cur.tags) {
+        if (!acc.includes(tag)) {
+          acc.push(tag);
+        }
+        return acc;
+      }
+    }, []) || [];
   return (
     <Box>
       <Dialog
@@ -98,6 +109,20 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
                   onChange={(e) =>
                     setEditItem({ ...editItem, title: e.target.value })
                   }
+                />
+              </Box>
+            )}
+            {!loading && editMode && (
+              <Box pt={1}>
+                <CustomSelect
+                  value={editItem.tags[0]}
+                  options={allTags.map((t) => ({
+                    label: tagToLabel(t),
+                    value: t,
+                  }))}
+                  onUpdate={(group) => {
+                    setEditItem({ ...editItem, tags: [group] });
+                  }}
                 />
               </Box>
             )}
@@ -163,23 +188,29 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
                   </Box>
                 );
               })}
-              <ListItem disablePadding>
+              <ListItem disablePadding onClick={() => {}}>
+                <ListItemButton>
+                  <ListItemText
+                    primary={<Button variant="text">Add Field</Button>}
+                  />
+                </ListItemButton>
+              </ListItem>
+              <ListItem
+                disablePadding
+                onClick={async () => {
+                  if (!window.confirm("Delete " + item.title + "?")) {
+                    return;
+                  }
+                  setLoading(true);
+                  await api.del("/api/items?item_id=" + item.item_id);
+                  refresh();
+                  handleClose();
+                }}
+              >
                 <ListItemButton>
                   <ListItemText
                     primary={
-                      <Button
-                        color="error"
-                        variant="text"
-                        onClick={async () => {
-                          if (!window.confirm("Delete " + item.title + "?")) {
-                            return;
-                          }
-                          setLoading(true);
-                          await api.del("/api/items?item_id=" + item.item_id);
-                          refresh();
-                          handleClose();
-                        }}
-                      >
+                      <Button color="error" variant="text">
                         Delete
                       </Button>
                     }
