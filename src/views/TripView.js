@@ -18,14 +18,17 @@ const TripView = () => {
   const { api, canEditTrip } = useAppEnv();
   const [trip, setTrip] = useState(null);
   const [tab, setTab] = React.useState(0);
+  const [loadingTrip, setLoadingTrip] = useState(false);
   useEffect(() => {
-    api
-      .get("/api/trips", { trip_id: trip_id })
-      .then(({ data: trip }) => setTrip(trip));
+    setLoadingTrip(true);
+    api.get("/api/trips", { trip_id: trip_id }).then(({ data: trip }) => {
+      setTrip(trip);
+      setLoadingTrip(false);
+    });
   }, [api, trip_id]);
   const Page = TAB_COMPONENTS[tab];
   const canEdit = canEditTrip(trip);
-  const loading = trip === null;
+  const loading = trip === null || loadingTrip;
   return (
     <Box>
       <TripAppBar
@@ -35,7 +38,7 @@ const TripView = () => {
         showExtras={tab === 0}
       />
       <TripTabs tab={tab} setTab={setTab} />
-      <Box sx={{ marginTop: "60px" }}>
+      <Box sx={{ marginTop: "60px", marginBottom: "72px" }}>
         <Page trip={trip} loading={loading} canEdit={canEdit} />
       </Box>
     </Box>

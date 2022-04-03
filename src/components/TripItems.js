@@ -18,6 +18,7 @@ import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import ItemView from "../components/ItemView";
 
 function TripItems({ trip, loading, canEdit }) {
   const itemsByTag = {};
@@ -29,6 +30,9 @@ function TripItems({ trip, loading, canEdit }) {
       }
       itemsByTag[tag].push(item);
     }
+  }
+  for (let tag in itemsByTag) {
+    itemsByTag[tag].sort((a, b) => a.title.localeCompare(b.title));
   }
   return (
     <Box>
@@ -56,21 +60,26 @@ function TripItems({ trip, loading, canEdit }) {
       <Box p={1} mt={"200px"}>
         {trip &&
           Object.keys(itemsByTag).map((tag) => (
-            <TagCard trip={trip} tag={tag} items={itemsByTag[tag]} key={tag} />
+            <TagCard
+              trip={trip}
+              tag={tag}
+              items={itemsByTag[tag]}
+              key={tag}
+              canEdit={canEdit}
+            />
           ))}
       </Box>
     </Box>
   );
 }
 
-function TagCard({ tag, items, trip }) {
+function TagCard({ tag, items, trip, canEdit }) {
   const { api } = useAppEnv();
   const openKey = `${trip.trip_id}:${tag}:open`;
   const [expanded, setExpanded] = useState(false);
   useEffect(() => {
     setExpanded(api.getKey(openKey));
   }, [api, openKey]);
-  const props = Object.keys(ITEM_PROPS);
   return (
     <Accordion
       key={tag}
@@ -101,58 +110,64 @@ function TagCard({ tag, items, trip }) {
         >
           {items.map((item, i) => (
             <Box key={item.item_id}>
-              <ListItem
-                alignItems="flex-start"
-                sx={{ padding: "6px 6px 6px 10px" }}
-              >
-                <ListItemText
-                  primary={item.title}
-                  secondary={
-                    <React.Fragment>
-                      <Typography
-                        sx={{ display: "inline" }}
-                        component="span"
-                        variant="body2"
-                        color="text.primary"
-                      ></Typography>
-                      <List>
-                        {props.map((prop) => {
-                          const { icon: PropIcon, renderInList: PropElem } =
-                            ITEM_PROPS[prop];
-                          return (
-                            <Box>
-                              {Object.keys(item.props).includes(prop) && (
-                                <ListItem disablePadding>
-                                  <ListItemButton>
-                                    <ListItemIcon>
-                                      <PropIcon />
-                                    </ListItemIcon>
-                                    <PropElem
-                                      trip={trip}
-                                      item={item}
-                                      propDef={ITEM_PROPS[prop]}
-                                      value={item.props[prop]}
-                                    />
-                                  </ListItemButton>
-                                </ListItem>
-                              )}
-                              {Object.keys(item.props).includes(prop) && (
-                                <Divider variant="inset" component="li" />
-                              )}
-                            </Box>
-                          );
-                        })}
-                      </List>
-                    </React.Fragment>
-                  }
-                />
-              </ListItem>
+              <TripItem trip={trip} item={item} canEdit={canEdit} />
               {i !== items.length - 1 && <Divider component="li" />}
             </Box>
           ))}
         </List>
       </AccordionDetails>
     </Accordion>
+  );
+}
+
+function TripItem({ trip, item, canEdit }) {
+  const props = Object.keys(ITEM_PROPS);
+  const [open, setOpen] = useState(false);
+  return (
+    <ListItem alignItems="flex-start" sx={{ padding: "6px 6px 6px 10px" }}>
+      <ItemView
+        open={open}
+        setOpen={setOpen}
+        item={item}
+        trip={trip}
+        canEdit={canEdit}
+      />
+      <ListItemText
+        primary={<span onClick={() => setOpen(true)}>{item.title}</span>}
+        secondary={
+          <React.Fragment>
+            <List>
+              {props.map((prop) => {
+                const { icon: PropIcon, renderInList: PropElem } =
+                  ITEM_PROPS[prop];
+                return (
+                  <Box>
+                    {Object.keys(item.props).includes(prop) && (
+                      <ListItem disablePadding>
+                        <ListItemButton>
+                          <ListItemIcon>
+                            <PropIcon />
+                          </ListItemIcon>
+                          <PropElem
+                            trip={trip}
+                            item={item}
+                            propDef={ITEM_PROPS[prop]}
+                            value={item.props[prop]}
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                    )}
+                    {Object.keys(item.props).includes(prop) && (
+                      <Divider variant="inset" component="li" />
+                    )}
+                  </Box>
+                );
+              })}
+            </List>
+          </React.Fragment>
+        }
+      />
+    </ListItem>
   );
 }
 
