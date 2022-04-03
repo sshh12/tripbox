@@ -4,9 +4,6 @@ import { useAppEnv } from "../app/env";
 import { Link as Lk } from "react-router-dom";
 import MenuAppBar from "../components/MenuAppBar";
 import Box from "@mui/material/Box";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
-import ImageListItemBar from "@mui/material/ImageListItemBar";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Button from "@mui/material/Button";
@@ -16,6 +13,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import CopyInput from "./../components/CopyInput";
 
 const Home = () => {
   const { api } = useAppEnv();
@@ -44,20 +45,24 @@ const Home = () => {
 
 function TripImageList({ trips }) {
   return (
-    <ImageList cols={1}>
+    <Box>
       {trips.map((trip) => (
-        <Lk to={`/trips/${trip.trip_id}`} key={trip.trip_id}>
-          <ImageListItem>
-            <img
-              src={`https://source.unsplash.com/random/1024x768?` + trip.name}
-              alt={trip.name}
-              loading="lazy"
-            />
-            <ImageListItemBar title={trip.name} />
-          </ImageListItem>
-        </Lk>
+        <Card sx={{ marginBottom: "10px" }}>
+          <CardContent>
+            <Lk
+              to={`/trips/${trip.trip_id}`}
+              key={trip.trip_id}
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                {trip.name}
+              </Typography>
+            </Lk>
+            <CopyInput sx={{ color: "black" }} value={trip.inbox_email || ""} />
+          </CardContent>
+        </Card>
       ))}
-    </ImageList>
+    </Box>
   );
 }
 
