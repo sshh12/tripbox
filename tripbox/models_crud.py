@@ -223,7 +223,7 @@ def send_invite_email(from_email, email, trip, viewer_only):
     )
 
 
-def add_item_from_inbound_email(inbox_email, email_data, by_user):
+def add_item_from_inbound_email(inbox_email, email_data):
     trip = get_or_404(Trip, Trip.inbox_email == inbox_email)
     title = email_data["subject"].replace("Fwd: ", "")
     from_email = json.loads(email_data["envelope"])["from"]
