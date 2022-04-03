@@ -137,7 +137,7 @@ def get_trip_for_item(item):
 
 
 def create_item(trip, by_user, *, title, tags=[], props={}):
-    if not user_can_edit_trip(by_user, trip):
+    if by_user is not None and not user_can_edit_trip(by_user, trip):
         abort(401)
     item = Item.create(title=title, tags=tags, props=props)
     TripItem.create(trip=trip, item=item)
@@ -181,8 +181,8 @@ def create_tables():
     user = get_or_create_user("example@example.com")
     trip = create_trip(user, "Test Trip")
     items = [
-        create_item(trip, title="Confirmation for The Lincoln", tags=["hotel"]),
-        create_item(trip, title="Airline Ticket Confirmation", tags=["flight"]),
+        create_item(trip, None, title="Confirmation for The Lincoln", tags=["hotel"]),
+        create_item(trip, None, title="Airline Ticket Confirmation", tags=["flight"]),
     ]
 
 
@@ -223,11 +223,11 @@ def send_invite_email(from_email, email, trip, viewer_only):
     )
 
 
-def add_item_from_inbound_email(inbox_email, email_data):
+def add_item_from_inbound_email(inbox_email, email_data, by_user):
     trip = get_or_404(Trip, Trip.inbox_email == inbox_email)
     title = email_data["subject"].replace("Fwd: ", "")
     from_email = json.loads(email_data["envelope"])["from"]
-    create_item(trip, title, tags=["by:" + from_email], props={"email": email_data})
+    create_item(trip, by_user=None, title=title, tags=["by:" + from_email], props={"email": email_data})
 
 
 if __name__ == "__main__":
