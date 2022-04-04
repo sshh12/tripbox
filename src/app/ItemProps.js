@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import FullScreenLink from "../components/FullScreenLink";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
+import NotesIcon from "@mui/icons-material/Notes";
 import MuiPhoneNumber from "material-ui-phone-number";
 
 const modifyItemProp = (item, propKey, value) => {
@@ -85,6 +86,32 @@ const ITEM_PROPS = {
             value={value}
             onChange={(v) =>
               setEditItem(modifyItemProp(item, "emergencyphone", v))
+            }
+          />
+        }
+      />
+    ),
+  },
+  note: {
+    icon: NotesIcon,
+    title: "Note",
+    defaultValue: "",
+    addable: true,
+    renderInList: ({ trip, item, propDef, value }) => (
+      <ListItemText secondary={propDef.title} primary={value} />
+    ),
+    renderInListEditor: ({ trip, item, propDef, value, setEditItem }) => (
+      <ListItemText
+        primary={
+          <TextField
+            multiline
+            autoComplete="off"
+            label={propDef.title}
+            variant="standard"
+            placeholder="Notes..."
+            value={value}
+            onChange={(e) =>
+              setEditItem(modifyItemProp(item, "note", e.target.value))
             }
           />
         }
