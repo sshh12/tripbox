@@ -124,7 +124,15 @@ function TripItem({ trip, item, canEdit }) {
   const props = Object.keys(ITEM_PROPS);
   const [open, setOpen] = useState(false);
   return (
-    <ListItem alignItems="flex-start" sx={{ padding: "6px 6px 6px 10px" }}>
+    <ListItem
+      alignItems="flex-start"
+      onClick={() => {
+        if (!open) {
+          setOpen(true);
+        }
+      }}
+      sx={{ padding: "6px 6px 6px 10px" }}
+    >
       <ItemView
         open={open}
         setOpen={setOpen}
@@ -133,7 +141,7 @@ function TripItem({ trip, item, canEdit }) {
         canEdit={canEdit}
       />
       <ListItemText
-        primary={<span onClick={() => setOpen(true)}>{item.title}</span>}
+        primary={<span>{item.title}</span>}
         secondary={
           <React.Fragment>
             <List>

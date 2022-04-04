@@ -41,10 +41,12 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
     setEditItem(item);
   }, [item]);
   const handleClose = () => {
+    console.log("close!");
     setOpen(false);
     setLoading(false);
     setEditMode(false);
     setEditItem(item);
+    console.log("close!!");
   };
   const { api, refresh } = useAppEnv();
   const allTags = trip.items.reduce((acc, cur) => {

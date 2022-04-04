@@ -22,7 +22,12 @@ function FullScreenLink({ opener, viewer }) {
   const PageElem = viewer;
   return (
     <Box>
-      <OpenElem onClick={() => setOpen(true)} />
+      <OpenElem
+        onClick={(e) => {
+          e.preventDefault();
+          setOpen(true);
+        }}
+      />
       <Dialog
         fullScreen
         open={open}

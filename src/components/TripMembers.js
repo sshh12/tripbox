@@ -109,6 +109,7 @@ function AddMemberDialog({ open, setOpen, trip }) {
   const [emails, setEmails] = useState([""]);
   const handleClose = () => {
     setOpen(false);
+    setEmails([""]);
   };
   return (
     <>
@@ -164,14 +165,16 @@ function AddMemberDialog({ open, setOpen, trip }) {
                 label="As observer"
               />
               <FormHelperText>
-                Add an observer to this trip who can view it's contents but
+                Add an observer to this trip who can view its contents but
                 cannot add or edit.
               </FormHelperText>
             </RadioGroup>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button color="error" onClick={handleClose}>
+            Cancel
+          </Button>
           <Button
             onClick={async () => {
               setSnackOpen(true);
