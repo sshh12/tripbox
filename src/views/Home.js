@@ -89,6 +89,7 @@ function NewTripDialog({ open, setOpen }) {
           afterwards.
         </DialogContentText>
         <TextField
+          autoComplete="off"
           autoFocus
           margin="dense"
           id="name"

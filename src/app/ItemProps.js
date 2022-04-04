@@ -31,6 +31,7 @@ const ITEM_PROPS = {
       <ListItemText
         primary={
           <TextField
+            autoComplete="off"
             label={propDef.title}
             variant="standard"
             placeholder="A1B2C3"

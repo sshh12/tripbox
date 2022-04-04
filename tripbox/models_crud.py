@@ -107,6 +107,7 @@ def delete_trip(trip, by_user):
         TripItem.delete().where(TripItem.trip == trip).execute()
         Item.delete().where(Item.item_id.in_(trip_items)).execute()
         UserTrip.delete().where(UserTrip.trip == trip).execute()
+        AuthToken.delete().where(AuthToken.join_trip_id == trip).execute()
         trip.delete_instance()
 
 
@@ -145,7 +146,7 @@ def create_item(trip, by_user, *, title, tags=[], props={}):
 
 
 def delete_item(item, trip, by_user):
-    if not user_can_edit_trip(trip, by_user):
+    if not user_can_edit_trip(by_user, trip):
         abort(401)
     with database.atomic():
         TripItem.delete().where(TripItem.item == item).execute()
