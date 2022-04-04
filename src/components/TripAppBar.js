@@ -10,6 +10,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import TuneIcon from "@mui/icons-material/Tune";
 import CopyInput from "../components/CopyInput";
+import OfflineIcon from "../components/OfflineIcon";
 
 function TripAppBar({ loading, trip, canEdit, showExtras }) {
   return (
@@ -29,6 +30,7 @@ function TripAppBar({ loading, trip, canEdit, showExtras }) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {trip ? trip.name : ""}
         </Typography>
+        <OfflineIcon />
         {canEdit && (
           <div>
             <Lk to={"/edit_trip/" + trip?.trip_id} style={{ color: "white" }}>

@@ -9,6 +9,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import LinearProgress from "@mui/material/LinearProgress";
 import MenuIcon from "@mui/icons-material/Menu";
 import TuneIcon from "@mui/icons-material/Tune";
+import OfflineIcon from "./OfflineIcon";
 
 function MenuAppBar({ loading, showHomeBtn, profileLink, optionsLink, title }) {
   return (
@@ -30,6 +31,7 @@ function MenuAppBar({ loading, showHomeBtn, profileLink, optionsLink, title }) {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           {title}
         </Typography>
+        <OfflineIcon />
         <div>
           {profileLink && (
             <Lk

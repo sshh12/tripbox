@@ -47,7 +47,7 @@ function TripImageList({ trips }) {
   return (
     <Box>
       {trips.map((trip) => (
-        <Card sx={{ marginBottom: "10px" }}>
+        <Card key={trip.trip_id} sx={{ marginBottom: "10px" }}>
           <CardContent>
             <Lk
               to={`/trips/${trip.trip_id}`}
