@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import FullScreenLink from "../components/FullScreenLink";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
+import MuiPhoneNumber from "material-ui-phone-number";
 
 const modifyItemProp = (item, propKey, value) => {
   return { ...item, props: { ...item.props, [propKey]: value } };
@@ -52,8 +53,19 @@ const ITEM_PROPS = {
     renderInList: ({ trip, item, propDef, value }) => (
       <ListItemText secondary={propDef.title} primary={value} />
     ),
-    renderInListEditor: ({ trip, item, propDef, value }) => (
-      <ListItemText secondary={propDef.title} primary={value} />
+    renderInListEditor: ({ trip, item, propDef, value, setEditItem }) => (
+      <ListItemText
+        secondary={propDef.title}
+        primary={
+          <MuiPhoneNumber
+            defaultCountry={"us"}
+            value={value}
+            onChange={(v) =>
+              setEditItem(modifyItemProp(item, "contactphone", v))
+            }
+          />
+        }
+      />
     ),
   },
   emergencyphone: {
@@ -64,8 +76,19 @@ const ITEM_PROPS = {
     renderInList: ({ trip, item, propDef, value }) => (
       <ListItemText secondary={propDef.title} primary={value} />
     ),
-    renderInListEditor: ({ trip, item, propDef, value }) => (
-      <ListItemText secondary={propDef.title} primary={value} />
+    renderInListEditor: ({ trip, item, propDef, value, setEditItem }) => (
+      <ListItemText
+        secondary={propDef.title}
+        primary={
+          <MuiPhoneNumber
+            defaultCountry={"us"}
+            value={value}
+            onChange={(v) =>
+              setEditItem(modifyItemProp(item, "emergencyphone", v))
+            }
+          />
+        }
+      />
     ),
   },
   email: {
