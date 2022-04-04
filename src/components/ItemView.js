@@ -26,6 +26,7 @@ import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import CustomSelect from "./CustomSelect";
+import OfflineIcon from "./OfflineIcon";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -41,12 +42,10 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
     setEditItem(item);
   }, [item]);
   const handleClose = () => {
-    console.log("close!");
     setOpen(false);
     setLoading(false);
     setEditMode(false);
     setEditItem(item);
-    console.log("close!!");
   };
   const { api, refresh } = useAppEnv();
   const allTags = trip.items.reduce((acc, cur) => {
@@ -73,6 +72,7 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               {trip.name}
             </Typography>
+            <OfflineIcon />
             {canEdit && (
               <IconButton size="large" color="inherit">
                 {!loading && !editMode && (
