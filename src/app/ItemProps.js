@@ -5,6 +5,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import ErrorIcon from "@mui/icons-material/Error";
 import Button from "@mui/material/Button";
 import FullScreenLink from "../components/FullScreenLink";
+import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
 
 const modifyItemProp = (item, propKey, value) => {
@@ -21,16 +22,32 @@ const ITEM_PROPS = {
   confirmation: {
     icon: ConfirmationNumberIcon,
     title: "Confirmation Code",
+    defaultValue: "",
+    addable: true,
     renderInList: ({ trip, item, propDef, value }) => (
-      <ListItemText secondary={propDef.title} primary={"asd"} />
-    ),
-    renderInListEditor: ({ trip, item, propDef, value }) => (
       <ListItemText secondary={propDef.title} primary={value} />
+    ),
+    renderInListEditor: ({ trip, item, propDef, value, setEditItem }) => (
+      <ListItemText
+        primary={
+          <TextField
+            label={propDef.title}
+            variant="standard"
+            placeholder="A1B2C3"
+            value={value}
+            onChange={(e) =>
+              setEditItem(modifyItemProp(item, "confirmation", e.target.value))
+            }
+          />
+        }
+      />
     ),
   },
   contactphone: {
     icon: PhoneIcon,
     title: "Contact Phone",
+    defaultValue: "",
+    addable: true,
     renderInList: ({ trip, item, propDef, value }) => (
       <ListItemText secondary={propDef.title} primary={value} />
     ),
@@ -41,6 +58,8 @@ const ITEM_PROPS = {
   emergencyphone: {
     icon: ErrorIcon,
     title: "Emergency Phone",
+    defaultValue: "",
+    addable: true,
     renderInList: ({ trip, item, propDef, value }) => (
       <ListItemText secondary={propDef.title} primary={value} />
     ),
@@ -51,6 +70,8 @@ const ITEM_PROPS = {
   email: {
     icon: EmailIcon,
     title: "Email",
+    defaultValue: "",
+    addable: false,
     renderInList: ({ trip, item, propDef, value }) => (
       <ListItemText
         primary={
@@ -90,9 +111,7 @@ const ITEM_PROPS = {
               )}
             />
             <Button
-              onClick={() => {
-                setEditItem(deleteItemProp(item, "email"));
-              }}
+              onClick={() => setEditItem(deleteItemProp(item, "email"))}
               variant="text"
               color="error"
             >

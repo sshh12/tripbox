@@ -21,7 +21,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
+import DialogTitle from "@mui/material/DialogTitle";
+import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
 import CustomSelect from "./CustomSelect";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -33,6 +36,7 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editItem, setEditItem] = useState(item);
+  const [showNewFieldDialog, setShowNewFieldDialog] = useState(false);
   useEffect(() => {
     setEditItem(item);
   }, [item]);
@@ -43,15 +47,14 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
     setEditItem(item);
   };
   const { api, refresh } = useAppEnv();
-  const allTags =
-    trip.items.reduce((acc, cur) => {
-      for (let tag of cur.tags) {
-        if (!acc.includes(tag)) {
-          acc.push(tag);
-        }
-        return acc;
+  const allTags = trip.items.reduce((acc, cur) => {
+    for (let tag of cur.tags) {
+      if (!acc.includes(tag)) {
+        acc.push(tag);
       }
-    }, []) || [];
+    }
+    return acc;
+  }, []);
   return (
     <Box>
       <Dialog
@@ -191,7 +194,14 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
               <ListItem disablePadding onClick={() => {}}>
                 <ListItemButton>
                   <ListItemText
-                    primary={<Button variant="text">Add Field</Button>}
+                    primary={
+                      <Button
+                        onClick={() => setShowNewFieldDialog(true)}
+                        variant="text"
+                      >
+                        Add Field
+                      </Button>
+                    }
                   />
                 </ListItemButton>
               </ListItem>
@@ -232,8 +242,58 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
             </Box>
           )}
         </Box>
+        <NewFieldDialog
+          item={item}
+          open={showNewFieldDialog}
+          setOpen={(show) => setShowNewFieldDialog(show)}
+          addProp={(propKey) => {
+            setEditItem({
+              ...editItem,
+              props: {
+                ...editItem.props,
+                [propKey]: ITEM_PROPS[propKey].defaultValue,
+              },
+            });
+          }}
+        />
       </Dialog>
     </Box>
+  );
+}
+
+function NewFieldDialog({ item, open, setOpen, addProp }) {
+  return (
+    <Dialog onClose={() => setOpen(false)} open={open}>
+      <DialogTitle>Add Field</DialogTitle>
+      <List>
+        {Object.keys(ITEM_PROPS)
+          .filter(
+            (prop) =>
+              ITEM_PROPS[prop].addable &&
+              !Object.keys(item.props).includes(prop)
+          )
+          .map((prop) => {
+            const { icon: PropIcon, title: name } = ITEM_PROPS[prop];
+            return (
+              <ListItem
+                key={name}
+                button
+                onClick={() => {
+                  addProp(prop);
+                  setOpen(false);
+                }}
+              >
+                <ListItemAvatar>
+                  <Avatar>
+                    <PropIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={name} />
+              </ListItem>
+            );
+          })}
+      </List>
+    </Dialog>
   );
 }
 
