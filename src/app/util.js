@@ -1,4 +1,4 @@
-export let tagToColor = (tag) => {
+export let tagIdxToColor = (idx) => {
   const colors = [
     "#F44336",
     "#E91E63",
@@ -11,8 +11,7 @@ export let tagToColor = (tag) => {
     "#CDDC39",
     "#607D8B",
   ];
-  const hash = tag.split("").reduce((acc, val) => val.charCodeAt(0) + acc, 0);
-  return colors[hash % colors.length];
+  return colors[idx % colors.length];
 };
 
 export let tagToLabel = (tag) => {

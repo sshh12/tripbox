@@ -32,9 +32,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-function ItemView({ trip, item, open, setOpen, canEdit }) {
+function ItemView({ trip, item, open, setOpen, canEdit, newItem }) {
   const props = Object.keys(ITEM_PROPS);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(newItem);
   const [loading, setLoading] = useState(false);
   const [editItem, setEditItem] = useState(item);
   const [showNewFieldDialog, setShowNewFieldDialog] = useState(false);
@@ -44,11 +44,11 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
   const handleClose = () => {
     setOpen(false);
     setLoading(false);
-    setEditMode(false);
+    setEditMode(newItem);
     setEditItem(item);
   };
   const { api, refresh } = useAppEnv();
-  const allTags = trip.items.reduce((acc, cur) => {
+  const allTags = (trip?.items || []).reduce((acc, cur) => {
     for (let tag of cur.tags) {
       if (!acc.includes(tag)) {
         acc.push(tag);
@@ -70,7 +70,7 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              {trip.name}
+              {trip?.name}
             </Typography>
             <OfflineIcon />
             {canEdit && (
@@ -82,10 +82,17 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
                   <SaveIcon
                     onClick={async () => {
                       setLoading(true);
-                      await api.put(
-                        "/api/items?item_id=" + item.item_id,
-                        editItem
-                      );
+                      if (newItem) {
+                        await api.post(
+                          "/api/items?trip_id=" + trip.trip_id,
+                          editItem
+                        );
+                      } else {
+                        await api.put(
+                          "/api/items?item_id=" + item.item_id,
+                          editItem
+                        );
+                      }
                       refresh();
                       handleClose();
                     }}
@@ -103,6 +110,7 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
             {!loading && editMode && (
               <Box>
                 <TextField
+                  placeholder="Item title"
                   sx={{ width: "100%" }}
                   InputProps={{
                     style: { color: "white" },
@@ -207,28 +215,30 @@ function ItemView({ trip, item, open, setOpen, canEdit }) {
                   />
                 </ListItemButton>
               </ListItem>
-              <ListItem
-                disablePadding
-                onClick={async () => {
-                  if (!window.confirm("Delete " + item.title + "?")) {
-                    return;
-                  }
-                  setLoading(true);
-                  await api.del("/api/items?item_id=" + item.item_id);
-                  refresh();
-                  handleClose();
-                }}
-              >
-                <ListItemButton>
-                  <ListItemText
-                    primary={
-                      <Button color="error" variant="text">
-                        Delete
-                      </Button>
+              {!newItem && (
+                <ListItem
+                  disablePadding
+                  onClick={async () => {
+                    if (!window.confirm("Delete " + item.title + "?")) {
+                      return;
                     }
-                  />
-                </ListItemButton>
-              </ListItem>
+                    setLoading(true);
+                    await api.del("/api/items?item_id=" + item.item_id);
+                    refresh();
+                    handleClose();
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemText
+                      primary={
+                        <Button color="error" variant="text">
+                          Delete
+                        </Button>
+                      }
+                    />
+                  </ListItemButton>
+                </ListItem>
+              )}
             </List>
           )}
           {loading && (

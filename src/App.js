@@ -44,18 +44,6 @@ const Router = () => {
       <Routes>
         <Route exact path="/" element={<Home />}></Route>
         <Route path="/trips/:trip_id" element={<TripView />}></Route>
-        {/* <Route path="/trips/:trip_id" element={<TripView />}></Route>
-        <Route path="/add_to_trip/:trip_id" element={<TripAdd />}></Route>
-        <Route path="/edit_trip/:trip_id" element={<TripEdit />}></Route>
-        <Route path="/invite_to_trip/:trip_id" element={<TripInvite />}></Route>
-        <Route
-          path="/invite_obs_to_trip/:trip_id"
-          element={<TripInvite />}
-        ></Route>
-        <Route
-          path="/trips/:trip_id/edit_item/:item_id"
-          element={<ItemEdit />}
-        ></Route> */}
       </Routes>
     );
   }

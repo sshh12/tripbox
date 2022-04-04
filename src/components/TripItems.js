@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { tagToColor, tagToLabel } from "./../app/util";
+import { tagIdxToColor, tagToLabel } from "./../app/util";
 import { useAppEnv } from "./../app/env";
 import ITEM_PROPS from "./../app/ItemProps";
 
-import { Link as Lk } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -34,33 +33,39 @@ function TripItems({ trip, loading, canEdit }) {
   for (let tag in itemsByTag) {
     itemsByTag[tag].sort((a, b) => a.title.localeCompare(b.title));
   }
+  const [showNewItemDialog, setShowNewItemDialog] = useState(false);
   return (
     <Box>
+      <ItemView
+        open={showNewItemDialog}
+        setOpen={setShowNewItemDialog}
+        item={{ title: "", tags: ["Untagged"], props: {} }}
+        trip={trip}
+        canEdit={canEdit}
+        newItem={true}
+      />
       {canEdit && (
-        <Lk
-          to={"/add_to_trip/" + trip?.trip_id}
-          style={{ textDecoration: "none", color: "#000" }}
+        <Fab
+          variant="extended"
+          color="secondary"
+          onClick={() => setShowNewItemDialog(true)}
+          sx={{
+            position: "fixed",
+            bottom: "100px",
+            right: "24px",
+            zIndex: 10,
+            textTransform: "none",
+          }}
         >
-          <Fab
-            variant="extended"
-            color="secondary"
-            sx={{
-              position: "fixed",
-              bottom: "100px",
-              right: "24px",
-              zIndex: 10,
-              textTransform: "none",
-            }}
-          >
-            <AddIcon />
-            <b>Add to trip</b>
-          </Fab>
-        </Lk>
+          <AddIcon />
+          <b>Add to trip</b>
+        </Fab>
       )}
-      <Box p={1} mt={"200px"}>
+      <Box p={1} mt={canEdit ? "200px" : "72px"}>
         {trip &&
-          Object.keys(itemsByTag).map((tag) => (
+          Object.keys(itemsByTag).map((tag, idx) => (
             <TagCard
+              idx={idx}
               trip={trip}
               tag={tag}
               items={itemsByTag[tag]}
@@ -73,7 +78,7 @@ function TripItems({ trip, loading, canEdit }) {
   );
 }
 
-function TagCard({ tag, items, trip, canEdit }) {
+function TagCard({ tag, items, trip, canEdit, idx }) {
   const { api } = useAppEnv();
   const openKey = `${trip.trip_id}:${tag}:open`;
   const [expanded, setExpanded] = useState(false);
@@ -92,7 +97,7 @@ function TagCard({ tag, items, trip, canEdit }) {
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         style={{
-          backgroundColor: tagToColor(tag),
+          backgroundColor: tagIdxToColor(idx),
           color: "#fff",
           minHeight: "20px",
         }}
@@ -149,7 +154,7 @@ function TripItem({ trip, item, canEdit }) {
                 const { icon: PropIcon, renderInList: PropElem } =
                   ITEM_PROPS[prop];
                 return (
-                  <Box>
+                  <Box key={prop}>
                     {Object.keys(item.props).includes(prop) && (
                       <ListItem disablePadding>
                         <ListItemButton>
